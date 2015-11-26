@@ -71,10 +71,17 @@ cURLImporter = ->
             urls = curlArgs.url
             curlObj.url = @cleanURL urls[urls.length-1]
         else
-            re = /([^\ ]+)[\ ]*$/;
+            re = /^curl\ (\"[^"]+\"|\'[^']+\'|[^-][^\ ]+)/;
             m = re.exec(rawString)
             if m != null
                 curlObj.url = @cleanURL m[1]
+                return
+
+            re = /\ (\"[^"]+\"|\'[^']+\'|[^-][^\ ]+)[\s\\]*$/;
+            m = re.exec(rawString)
+            if m != null
+                curlObj.url = @cleanURL m[1]
+                return
 
     @resolveMethod =  (curlArgs, curlObj) ->
         methods = ["GET"]
@@ -310,20 +317,33 @@ cURLImporter = ->
 
 
     @importString = (context, string) ->
-        re = /[ (?: \\\n)(?: \n)]+(?:(?:\-([\w])[\ ]*(\"[^\"]+\"|\'[^\']+\'|[\w]+|))|\-\-([\w\-]+)[\ ]*(\"[^\"]+\"|\'[^\']+\'|[\w]+|))+/gm;
-
+        re = /[ (?: \\\n)(?: \n)]+(?:\-(?:([\w])[\ ](\"[^\"]+\"|\'[^\']+\'|[^\-][^\ ]*)|([\w])(\"[^\"]+\"|\'[^\']+\'|[^\ ]+)|([\w]))|\-\-([\w\-]+)[\ ](\"[^\"]+\"|\'[^\']+\'|[^\-][^\ ]*)|\-\-([\w\-]+))+/gm;
         curlArgs = {}
         while not ((m = re.exec(string)) == null)
             if m.index == re.lastIndex
                 re.lastIndex++
+            key = null
+            value = ''
             if typeof m[1] isnt 'undefined'
-                if not (m[1] of curlArgs)
-                    curlArgs[m[1]] = []
-                curlArgs[m[1]].push(m[2])
-            else if typeof m[3] isnt 'undefined'
-                if not (m[3] of curlArgs)
-                    curlArgs[m[3]] = []
-                curlArgs[m[3]].push(m[4])
+                key = m[1]
+            if typeof m[2] isnt 'undefined'
+                value = m[2]
+            if typeof m[3] isnt 'undefined'
+                key = m[3]
+            if typeof m[4] isnt 'undefined'
+                value = m[4]
+            if typeof m[5] isnt 'undefined'
+                key = m[5]
+            if typeof m[6] isnt 'undefined'
+                key = m[6]
+            if typeof m[7] isnt 'undefined'
+                value = m[7]
+            if typeof m[8] isnt 'undefined'
+                key = m[8]
+            if key != null
+                if not (key of curlArgs)
+                    curlArgs[key] = []
+                curlArgs[key].push(value)
 
         @createPawRequest(context, curlArgs, string)
 
