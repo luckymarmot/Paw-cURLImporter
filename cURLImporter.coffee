@@ -60,16 +60,21 @@ cURLImporter = ->
         else
             throw new Error "Invalid curl file unable to clean string: #{string}"
 
+    @cleanURL = (string) ->
+      string = @clean string
+      if not string.match(/^https?\:\/\//)
+        string = 'http://' + string
+      return string
 
     @resolveURL = (curlArgs, rawString, curlObj) ->
         if "url" of curlArgs
             urls = curlArgs.url
-            curlObj.url = @clean urls[urls.length-1]
+            curlObj.url = @cleanURL urls[urls.length-1]
         else
             re = /([^\ ]+)[\ ]*$/;
             m = re.exec(rawString)
             if m != null
-                curlObj.url = @clean m[1]
+                curlObj.url = @cleanURL m[1]
 
     @resolveMethod =  (curlArgs, curlObj) ->
         methods = ["GET"]
