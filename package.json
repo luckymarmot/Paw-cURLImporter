@@ -1,10 +1,37 @@
 {
   "name": "Paw-cURLImporter",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "main": "extention.js",
+  "license": "MIT",
+  "homepage": "https://github.com/luckymarmot/Paw-cURLImporter",
+  "dependencies": {
+    "babel-plugin-transform-flow-strip-types": "^6.3.15",
+    "babel-polyfill": "^6.3.14",
+    "babel-runtime": "^6.3.19",
+    "immutable": "^3.7.6"
+  },
   "devDependencies": {
-    "coffee-script": "latest",
-    "mkdirp": "~0.5.0",
-    "ncp": "~1.0.1"
+    "babel-core": "^5.",
+    "babel-loader": "^6.2.0",
+    "babel-plugin-transform-decorators": "^6.3.13",
+    "babel-plugin-transform-runtime": "^6.3.13",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "babel-preset-stage-1": "^6.3.13",
+    "babel-preset-stage-2": "^6.3.13",
+    "babel-preset-stage-3": "^6.3.13",
+    "babel-register": "^6.3.13",
+    "path": "^0.12.7",
+    "webpack": "^1.12.9"
+  },
+  "scripts": {
+    "upgrade": "npm-check-updates -u && npm test",
+    "test": "$npm_package_options_mocha \"src/**/__tests__/*-test.js\"",
+    "test:watch": "npm test -- --watch",
+    "prestart": "npm install",
+    "build": "rm -rf dist/ && BUILD_ENV=build ./node_modules/.bin/webpack --bail --display-error-details",
+    "dist": "npm install --production && NODE_ENV=production npm run build",
+    "lint": "./node_modules/eslint/bin/eslint.js -c linting/dev.yaml src/"
   },
   "repository": {
     "type": "git",
