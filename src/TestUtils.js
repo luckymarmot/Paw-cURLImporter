@@ -1,9 +1,6 @@
 import {describe, it, before, after, beforeEach, afterEach} from 'mocha'
 import {assert} from 'chai';
 import Immutable from 'immutable'
-import React from 'react'
-import ShallowUtils from 'react-shallow-testutils';
-import TestUtils from 'react-addons-test-utils'
 
 
 class UnitTest {
@@ -93,50 +90,6 @@ class UnitTest {
     }
 }
 
-class ReactTest extends UnitTest {
-    _isShallow(instance) {
-        return '_reactInternalInstance' in instance === false
-    }
-
-    assertElemWithClassExists(tree, className) {
-        const elem = this.findWithClass(tree, className)
-
-        if (this._isShallow(tree)) {
-            return this.assert(ShallowUtils.isDOMComponent(elem))
-        }
-
-        return this.assert(TestUtils.isDOMComponent(elem))
-    }
-
-    createComponent(instance) {
-        return TestUtils.renderIntoDocument(instance)
-    }
-    createShallowComponent(instance) {
-        const shallowRenderer = TestUtils.createRenderer()
-        shallowRenderer.render(instance)
-
-        return shallowRenderer.getRenderOutput()
-    }
-    findAllWithClass(tree, className) {
-        if (this._isShallow(tree)) {
-            return ShallowUtils.findAllWithClass(tree, className)
-        }
-
-        return TestUtils.scryRenderedDOMComponentsWithClass(tree, className)
-    }
-    findWithClass(tree, className) {
-        if (this._isShallow(tree)) {
-            return ShallowUtils.findWithClass(tree, className)
-        }
-
-        return TestUtils.findRenderedDOMComponentWithClass(tree, className)
-    }
-    simulate(event, node, ...args) {
-        return TestUtils.Simulate[event](node, ...args)
-    }
-}
-
-
 function registerTest(Class) {
     const test = new Class()
     const tests = test._getTests()
@@ -152,7 +105,6 @@ function registerTest(Class) {
     })
 }
 
-export {UnitTest, ReactTest, registerTest}
 
 class MockedFunction {
     constructor() {
@@ -174,7 +126,7 @@ class MockedFunction {
     }
 }
 
-export function mockFunction(target, key, descriptor) {
+function mockFunction(target, key, descriptor) {
     const fn = descriptor.value
     descriptor.value = function() {
         const mockedFunction = new MockedFunction()
@@ -183,3 +135,5 @@ export function mockFunction(target, key, descriptor) {
     }
     return descriptor
 }
+
+export {UnitTest, registerTest, mockFunction}

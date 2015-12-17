@@ -7,8 +7,8 @@ require('babel-register')({
     'stage-3'
   ],
   plugins: [
-    'babel-plugin-rewire',
     'transform-runtime',
-    'transform-decorators-legacy'
+    'transform-decorators-legacy',
+    'babel-plugin-rewire',
   ]
 })
