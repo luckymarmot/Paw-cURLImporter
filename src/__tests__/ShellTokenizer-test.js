@@ -10,6 +10,78 @@ class TestTokenSplitting extends UnitTest {
     this.__testSimpleSpaceSplit('toto titi"foo"bar foo\\ bar', ['toto', 'titifoobar', 'foo bar'])
   }
 
+  testSplitOnPipe() {
+    this.__testSimpleSpaceSplit('curl my-url|cat', ['curl', 'my-url', '|', 'cat'])
+  }
+
+  testSplitOnPipeWithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url | cat', ['curl', 'my-url', '|', 'cat'])
+  }
+
+  testSplitOnRedirect() {
+    this.__testSimpleSpaceSplit('curl my-url>cat', ['curl', 'my-url', '>', 'cat'])
+  }
+
+  testSplitOnRedirectWithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url > cat', ['curl', 'my-url', '>', 'cat'])
+  }
+
+  testSplitOnRedirectAppend() {
+    this.__testSimpleSpaceSplit('curl my-url>>cat', ['curl', 'my-url', '>>', 'cat'])
+  }
+
+  testSplitOnRedirectAppendWithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url >> cat', ['curl', 'my-url', '>>', 'cat'])
+  }
+
+  testSplitOnRedirect1() {
+    this.__testSimpleSpaceSplit('curl my-url1>cat', ['curl', 'my-url1', '>', 'cat'])
+  }
+
+  testSplitOnRedirect1WithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url 1> cat', ['curl', 'my-url', '1>', 'cat'])
+  }
+
+  testSplitOnRedirect1Append() {
+    this.__testSimpleSpaceSplit('curl my-url1>>cat', ['curl', 'my-url1', '>>', 'cat'])
+  }
+
+  testSplitOnRedirect1AppendWithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url 1>> cat', ['curl', 'my-url', '1>>', 'cat'])
+  }
+
+  testSplitOnRedirect2() {
+    this.__testSimpleSpaceSplit('curl my-url2>cat', ['curl', 'my-url2', '>', 'cat'])
+  }
+
+  testSplitOnRedirect2WithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url 2> cat', ['curl', 'my-url', '2>', 'cat'])
+  }
+
+  testSplitOnRedirect2Append() {
+    this.__testSimpleSpaceSplit('curl my-url2>>cat', ['curl', 'my-url2', '>>', 'cat'])
+  }
+
+  testSplitOnRedirect2AppendWithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url 2>> cat', ['curl', 'my-url', '2>>', 'cat'])
+  }
+
+  testSplitOnImport() {
+    this.__testSimpleSpaceSplit('curl my-url<file', ['curl', 'my-url', '<', 'file'])
+  }
+
+  testSplitOnImportWithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url < file', ['curl', 'my-url', '<', 'file'])
+  }
+
+  testSplitOnImport0() {
+    this.__testSimpleSpaceSplit('curl my-url0<file', ['curl', 'my-url0', '<', 'file'])
+  }
+
+  testSplitOnImport0WithSpaces() {
+    this.__testSimpleSpaceSplit('curl my-url 0< file', ['curl', 'my-url', '0<', 'file'])
+  }
+
   testExamplesFromYaml() {
     const tests = JSON.parse(
       require('fs').readFileSync(__dirname + '/generated/tests.json', 'utf8')

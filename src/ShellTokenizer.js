@@ -73,7 +73,7 @@ export default class ShellTokenizer {
   }
 
   tokenize(string) {
-    const re = /(?:(?:\"(?:\\\"|[^\"])*?\")|(?:\'[^\']*?\')|(?:\$\'(?:\\\'|[^\'])*?\')|(?:\\\s|\S))+/gm;
+    const re = /(?:\||[12\&]?\>{1,2}|0?\<)|(?:(?:\"(?:\\\"|[^\"])*?\")|(?:\'[^\']*?\')|(?:\$\'(?:\\\'|[^\'])*?\')|(?:\\\s|[^\s\|\>\<\&]))+/gm;
     let tokens = Immutable.List()
     let m
     while ((m = re.exec(string)) !== null) {
