@@ -2,7 +2,7 @@ import {UnitTest, registerTest} from '../TestUtils'
 import Immutable from 'immutable'
 import fs from 'fs'
 
-import { BashArgumentParser } from '../BashArgumentParser'
+import ShellTokenizer from '../ShellTokenizer'
 
 @registerTest
 class TestTokenSplitting extends UnitTest {
@@ -24,8 +24,8 @@ class TestTokenSplitting extends UnitTest {
   }
 
   __testSimpleSpaceSplit(input, output) {
-    let parser = new BashArgumentParser()
-    let tokens = parser._tokenize(input)
+    let parser = new ShellTokenizer()
+    let tokens = parser.tokenize(input)
     console.log('>>>>>>', input, output, tokens.toJS());
     this.assertEqual(tokens.count(), Immutable.fromJS(output).count())
     this.assertTrue(Immutable.is(tokens, Immutable.fromJS(output)))
