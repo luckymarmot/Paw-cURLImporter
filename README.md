@@ -36,17 +36,9 @@ Do to OS X sandboxing, Paw cannot read from local files. You must embed all valu
 ### Build & Install
 
 ```shell
+nvm install
 npm install
-cake build
-cake install
-```
-
-### Watch
-
-During development, watch for changes:
-
-```shell
-cake watch
+npm run build
 ```
 
 ## License

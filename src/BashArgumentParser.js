@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 
-class ParsedData {
+export class ParsedData {
   constructor() {
     this.data = Immutable.Map()
   }
@@ -30,7 +30,7 @@ class ParsedData {
     if (m = re.exec(value) !== null) {
       return m[1].replace(/\\(\")/g, '$1')
     }
-    let re = /^[\$]*\'((?:\\\'|[^\'])*?)\'$/
+    re = /^[\$]*\'((?:\\\'|[^\'])*?)\'$/
     if (m = re.exec(value) !== null) {
       return m[1].replace(/\\(\')/g, '$1')
     }
@@ -38,13 +38,13 @@ class ParsedData {
   }
 }
 
-class BashArgumentParser {
+export class BashArgumentParser {
   constructor() {
     this.tokenParsers = Immutable.List()
   }
 
   _tokenize(string) {
-    const re = /((?:(?:\"(?:\\\"|[^\"])*?\")|(?:\'(?:\\\'|[^\'])*?\')|\S)+)/gm;
+    const re = /((?:(?:\"(?:\\\"|[^\"])*?\")|(?:\'[^\']*?\')|(?:\$\'(?:\\\'|[^\'])*?\')|(?:\\\s|\S))+)/gm;
     let tokens = Immutable.List()
     let m
     while ((m = re.exec(string)) !== null) {
