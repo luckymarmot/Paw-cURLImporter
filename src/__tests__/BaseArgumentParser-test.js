@@ -7,7 +7,7 @@ import { BashArgumentParser } from '../BashArgumentParser'
 @registerTest
 class TestTokenSplitting extends UnitTest {
   testExample() {
-    this.__testSimpleSpaceSplit('toto titi', ['toto', 'titi']);
+    this.__testSimpleSpaceSplit('toto titi"foo"bar foo\\ bar', ['toto', 'titifoobar', 'foo bar'])
   }
 
   testExamplesFromYaml() {
@@ -22,11 +22,12 @@ class TestTokenSplitting extends UnitTest {
       this.__testSimpleSpaceSplit(item.input, output)
     })
   }
+
   __testSimpleSpaceSplit(input, output) {
     let parser = new BashArgumentParser()
     let tokens = parser._tokenize(input)
-    console.log(input, output, tokens.toJS());
+    console.log('>>>>>>', input, output, tokens.toJS());
     this.assertEqual(tokens.count(), Immutable.fromJS(output).count())
-    // this.assertTrue(Immutable.is(tokens, Immutable.fromJS(output)))
+    this.assertTrue(Immutable.is(tokens, Immutable.fromJS(output)))
   }
 }
