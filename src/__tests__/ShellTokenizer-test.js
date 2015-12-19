@@ -82,6 +82,18 @@ class TestShellTokenizer extends UnitTest {
     this.__testSimpleSpaceSplit('curl my-url 0< file', ['curl', 'my-url', '0<', 'file'])
   }
 
+  testSplitOnSemicolon() {
+    this.__testSimpleSpaceSplit('curl my-url;curl', ['curl', 'my-url', ';', 'curl'])
+  }
+
+  testSplitOnSimpleAnd() {
+    this.__testSimpleSpaceSplit('curl my-url&curl', ['curl', 'my-url', '&', 'curl'])
+  }
+
+  testSplitOnDoubleAnd() {
+    this.__testSimpleSpaceSplit('curl my-url&&curl', ['curl', 'my-url', '&&', 'curl'])
+  }
+
   testExamplesFromYaml() {
     const tests = JSON.parse(
       require('fs').readFileSync(__dirname + '/generated/tests.json', 'utf8')

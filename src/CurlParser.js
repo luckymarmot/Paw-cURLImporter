@@ -36,7 +36,7 @@ export class CurlRequest extends Immutable.Record({
   }
 }
 
-const TOKEN_BREAK = Immutable.List(['|', '>', '1>', '2>', '&>'])
+const TOKEN_BREAK = Immutable.List(['|', '>', '1>', '2>', '&>', ';', '&', '&&'])
 
 export default class CurlParser {
   constructor() {
