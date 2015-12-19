@@ -97,6 +97,14 @@ export default class CurlParser {
       else if (arg === '-A' || arg === '--user-agent') {
         request = this._parseUserAgent(request)
       }
+      else if (arg === '-b' || arg === '--cookie') {
+        request = this._parseCookie(request)
+      }
+      else if (arg === '-e' || arg === '--referer') {
+        // note: spelling "referer" is a typo in the HTTP spec
+        // while correct English is "Referrer", header name if "Referer" (one R)
+        request = this._parseReferer(request)
+      }
       else {
         urls = urls.push(this._cleanUrl(arg))
       }
@@ -164,6 +172,16 @@ export default class CurlParser {
 
   _parseUserAgent(request) {
     return request.setIn(['headers', 'User-Agent'], this._popArg())
+  }
+
+  _parseCookie(request) {
+    return request.setIn(['headers', 'Cookie'], this._popArg())
+  }
+
+  _parseReferer(request) {
+    // note: spelling "referer" is a typo in the HTTP spec
+    // while correct English is "Referrer", header name if "Referer" (one R)
+    return request.setIn(['headers', 'Referer'], this._popArg())
   }
 
   _parseMultipartFormData(request) {

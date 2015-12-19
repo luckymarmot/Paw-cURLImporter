@@ -732,6 +732,44 @@ class TestCurlParser extends UnitTest {
   }
 
   // 
+  // testing -b --cookie
+  // 
+
+  testCookie() {
+    this.__testCurlRequest('curl http://httpbin.org/get -b "key=value"', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      headers: Immutable.OrderedMap({
+        'Cookie': 'key=value'
+      })
+    }))
+  }
+
+  // 
+  // testing -e --referer
+  // 
+
+  testReferer() {
+    this.__testCurlRequest('curl http://httpbin.org/get --referer http://google.com', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      headers: Immutable.OrderedMap({
+        'Referer': 'http://google.com'
+      })
+    }))
+  }
+
+  testRefererShort() {
+    this.__testCurlRequest('curl http://httpbin.org/get -e http://google.com', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      headers: Immutable.OrderedMap({
+        'Referer': 'http://google.com'
+      })
+    }))
+  }
+
+  // 
   // helpers
   // 
 
