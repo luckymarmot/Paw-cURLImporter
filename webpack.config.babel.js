@@ -9,7 +9,7 @@ const config = {
   target: 'node-webkit',
   entry: [
     'immutable',
-    './src/extension.js'
+    './src/CurlImporter.js'
   ],
   output:{
     path: path.join(__dirname, './build'),

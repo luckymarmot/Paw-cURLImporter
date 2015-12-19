@@ -1263,8 +1263,8 @@ class TestCurlParser extends UnitTest {
   }
 
   __testCurlRequests(input, expected) {
-    let parser = new CurlParser()
-    let requests = parser.parse(input)
+    const parser = new CurlParser()
+    const requests = parser.parse(input)
     console.log('expected:', JSON.stringify(expected), '\nrequests:', JSON.stringify(requests))
     this.assertTrue(Immutable.is(requests, expected))
   }

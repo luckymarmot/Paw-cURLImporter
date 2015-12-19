@@ -1,18 +1,12 @@
-install:
-	npm prune
-	NODE_ENV=production npm run dist
+identifier=com.luckymarmot.PawExtensions.cURLImporter
+extensions_dir=$(HOME)/Library/Containers/com.luckymarmot.Paw/Data/Library/Application Support/com.luckymarmot.Paw/Extensions/
+
+build:
+	npm run build
 
 clean:
-	rm -rf node_modules
+	rm -Rf ./build/
 
-dist_app: clean install
-
-test:
-	npm test
-
-lint:
-	./node_modules/eslint/bin/eslint.js -c linting/dev.yaml src/
-
-dev:
-	npm install
-	npm start
+install: clean build
+	mkdir -p "$(extensions_dir)$(identifier)/"
+	cp -r ./build/* "$(extensions_dir)$(identifier)/"
