@@ -2,7 +2,12 @@ import {UnitTest, registerTest} from '../TestUtils'
 import Immutable from 'immutable'
 import fs from 'fs'
 
-import CurlParser, { CurlRequest, CurlKeyValue, CurlFileReference } from '../CurlParser'
+import CurlParser, {
+  CurlRequest,
+  CurlKeyValue,
+  CurlFileReference,
+  CurlAuth
+} from '../CurlParser'
 
 @registerTest
 class TestCurlParser extends UnitTest {
@@ -732,7 +737,7 @@ class TestCurlParser extends UnitTest {
   }
 
   // 
-  // testing -b --cookie
+  // testing -b --cookie options
   // 
 
   testCookie() {
@@ -746,7 +751,7 @@ class TestCurlParser extends UnitTest {
   }
 
   // 
-  // testing -e --referer
+  // testing -e --referer options
   // 
 
   testReferer() {
@@ -765,6 +770,194 @@ class TestCurlParser extends UnitTest {
       method: 'GET',
       headers: Immutable.OrderedMap({
         'Referer': 'http://google.com'
+      })
+    }))
+  }
+
+  // 
+  // testing -u --user --basic --digest --ntlm --negotiate options
+  // 
+
+  testUserOption() {
+    this.__testCurlRequest('curl http://httpbin.org/get -u foo:bar', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserOptionNoPassword() {
+    this.__testCurlRequest('curl http://httpbin.org/get -u foo', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: null,
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserOptionAndBasicOption() {
+    this.__testCurlRequest('curl http://httpbin.org/get -u foo:bar --basic', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserOptionAndDigestOption() {
+    this.__testCurlRequest('curl http://httpbin.org/get -u foo:bar --digest', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'digest'
+      })
+    }))
+  }
+
+  testUserOptionAndNtlmOption() {
+    this.__testCurlRequest('curl http://httpbin.org/get -u foo:bar --ntlm', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'ntlm'
+      })
+    }))
+  }
+
+  testUserOptionAndNegotiateOption() {
+    this.__testCurlRequest('curl http://httpbin.org/get -u foo:bar --negotiate', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'negotiate'
+      })
+    }))
+  }
+
+  // 
+  // testing http://username:password@domain.com
+  // 
+
+  testUserInUrl() {
+    this.__testCurlRequest('curl https://foo:bar@httpbin.org/get', new CurlRequest({
+      url: 'https://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserInUrlNoPassword() {
+    this.__testCurlRequest('curl https://foo@httpbin.org/get', new CurlRequest({
+      url: 'https://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: null,
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserInUrlNoHttp() {
+    this.__testCurlRequest('curl foo:bar@httpbin.org/get', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserInUrlNoHttpNoPassword() {
+    this.__testCurlRequest('curl foo@httpbin.org/get', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: null,
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserInUrlOverriddenAfter() {
+    this.__testCurlRequest('curl https://foo:bar@httpbin.org/get -u myuser:mypassword', new CurlRequest({
+      url: 'https://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'myuser',
+        password: 'mypassword',
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserInUrlOverriddenBefore() {
+    this.__testCurlRequest('curl -u myuser:mypassword https://foo:bar@httpbin.org/get', new CurlRequest({
+      url: 'https://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'myuser',
+        password: 'mypassword',
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserInUrlWithBasicOptionAfter() {
+    this.__testCurlRequest('curl https://foo:bar@httpbin.org/get --basic', new CurlRequest({
+      url: 'https://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserInUrlWithBasicOptionBefore() {
+    this.__testCurlRequest('curl --basic https://foo:bar@httpbin.org/get', new CurlRequest({
+      url: 'https://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'basic'
+      })
+    }))
+  }
+
+  testUserInUrlWithDigestOption() {
+    this.__testCurlRequest('curl https://foo:bar@httpbin.org/get --digest', new CurlRequest({
+      url: 'https://httpbin.org/get',
+      method: 'GET',
+      auth: new CurlAuth({
+        username: 'foo',
+        password: 'bar',
+        type: 'digest'
       })
     }))
   }

@@ -12,13 +12,29 @@ export class CurlKeyValue extends Immutable.Record({
   value: null
 }) { }
 
+export class CurlAuth extends Immutable.Record({
+  username: null,
+  password: null,
+  type: 'basic'
+}) { }
+
 export class CurlRequest extends Immutable.Record({
   url: null,
   method: null,
   headers: Immutable.OrderedMap(),
   bodyType: null,
   body: null,
-}) { }
+  auth: null
+}) {
+  setAuthParams(authParams) {
+    let auth = this.get('auth')
+    if (auth == null) {
+      auth = new CurlAuth()
+    }
+    auth = auth.merge(authParams)
+    return this.set('auth', auth)
+  }
+}
 
 const TOKEN_BREAK = Immutable.List(['|', '>', '1>', '2>', '&>'])
 
@@ -105,8 +121,18 @@ export default class CurlParser {
         // while correct English is "Referrer", header name if "Referer" (one R)
         request = this._parseReferer(request)
       }
+      else if (arg === '-u' || arg === '--user') {
+        request = this._parseUser(request)
+      }
+      else if (arg === '--basic' ||
+               arg === '--digest' ||
+               arg === '--ntlm' ||
+               arg === '--negotiate') {
+        request = this._parseAuth(request, arg)
+      }
       else {
-        urls = urls.push(this._cleanUrl(arg))
+        request = this._parseUrl(request, arg)
+        urls = urls.push(request.get('url'))
       }
     }
     if (request.get('method') === null) {
@@ -118,11 +144,16 @@ export default class CurlParser {
     })
   }
 
-  _cleanUrl(url) {
-    if (!url.match(/^https?\:\/\//)) {
-      return 'http://' + url
+  _parseUrl(request, url) {
+    const m = url.match(/^(\w+\:\/\/)?(?:([^\:\/]+)(?:\:([^\@]+)?)?\@)?(.*)$/)
+    if (m[2] && !request.getIn(['auth', 'password'])) {
+      request = request.setAuthParams({
+        username:m[2],
+        password:(m[3] ? m[3] : null)
+      })
     }
-    return url
+    request = request.set('url', (m[1] ? m[1] : 'http://') + m[4])
+    return request
   }
 
   _normalizeHeader(string) {
@@ -182,6 +213,21 @@ export default class CurlParser {
     // note: spelling "referer" is a typo in the HTTP spec
     // while correct English is "Referrer", header name if "Referer" (one R)
     return request.setIn(['headers', 'Referer'], this._popArg())
+  }
+
+  _parseUser(request) {
+    const m = this._popArg().match(/([^\:]+)(?:\:(.*))?/)
+    return request.setAuthParams({
+      username:m[1],
+      password:(m[2] ? m[2] : null)
+    })
+  }
+
+  _parseAuth(request, arg) {
+    const m = arg.match(/\-{2}(\w+)/)
+    return request.setAuthParams({
+      type:m[1]
+    })
   }
 
   _parseMultipartFormData(request) {
