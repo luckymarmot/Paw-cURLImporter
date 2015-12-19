@@ -44,6 +44,13 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  testSimpleQueryParams() {
+    this.__testCurlRequest('curl "http://httpbin.org/get?key=value&key2=value2"', new CurlRequest({
+      url: 'http://httpbin.org/get?key=value&key2=value2',
+      method: 'GET'
+    }))
+  }
+
   // 
   // testing -X --request options
   // 
@@ -956,7 +963,9 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  // 
   // test multiple requests in same curl command / same options
+  // 
 
   testMultipleRequestsSimple() {
     this.__testCurlRequests('curl http://httpbin.org/get http://httpbin.org/post', Immutable.List([
@@ -978,6 +987,79 @@ class TestCurlParser extends UnitTest {
         method: 'POST',
         headers: Immutable.OrderedMap({
           'X-Paw': 'value'
+        })
+      }),
+      new CurlRequest({
+        url: 'http://httpbin.org/post',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          'X-Paw': 'value'
+        })
+      })
+    ]))
+  }
+
+  // 
+  // test multiple requests in same curl command / with different options
+  // -: --next option
+  // 
+
+  testMultipleRequestsDifferentOptionsSimple() {
+    this.__testCurlRequests('curl http://httpbin.org/get -: http://httpbin.org/post', Immutable.List([
+      new CurlRequest({
+        url: 'http://httpbin.org/get',
+        method: 'GET'
+      }),
+      new CurlRequest({
+        url: 'http://httpbin.org/post',
+        method: 'GET'
+      })
+    ]))
+  }
+
+  testMultipleRequestsDifferentOptionsChangeHeaders() {
+    this.__testCurlRequests('curl -X POST http://httpbin.org/post -H X-Paw2:value2 -: http://httpbin.org/get -H X-Paw:value', Immutable.List([
+      new CurlRequest({
+        url: 'http://httpbin.org/post',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          'X-Paw2': 'value2'
+        })
+      }),
+      new CurlRequest({
+        url: 'http://httpbin.org/get',
+        method: 'GET',
+        headers: Immutable.OrderedMap({
+          'X-Paw': 'value'
+        })
+      })
+    ]))
+  }
+
+  testMultipleRequestsDifferentOptionsMultipleOfEach() {
+    this.__testCurlRequests('curl -u foo:bar https://httpbin.org/get -H X-Paw2:value2 https://httpbin.org/get?key=value --next -H X-Paw:value http://httpbin.org/post -X POST', Immutable.List([
+      new CurlRequest({
+        url: 'https://httpbin.org/get',
+        method: 'GET',
+        headers: Immutable.OrderedMap({
+          'X-Paw2': 'value2'
+        }),
+        auth: new CurlAuth({
+          username: 'foo',
+          password: 'bar',
+          type: 'basic'
+        })
+      }),
+      new CurlRequest({
+        url: 'https://httpbin.org/get?key=value',
+        method: 'GET',
+        headers: Immutable.OrderedMap({
+          'X-Paw2': 'value2'
+        }),
+        auth: new CurlAuth({
+          username: 'foo',
+          password: 'bar',
+          type: 'basic'
         })
       }),
       new CurlRequest({
@@ -1122,6 +1204,52 @@ class TestCurlParser extends UnitTest {
       new CurlRequest({
         url: 'http://httpbin.org/post',
         method: 'POST'
+      })
+    ]))
+  }
+
+  //
+  // ignore unknown options
+  //
+
+  testIgnoreUnknownOptionsBefore() {
+    this.__testCurlRequests('curl --obscure-unknown-option http://httpbin.org/get -X POST', Immutable.List([
+      new CurlRequest({
+        url: 'http://httpbin.org/get',
+        method: 'POST'
+      })
+    ]))
+  }
+
+  testIgnoreUnknownOptionsAfter() {
+    this.__testCurlRequests('curl http://httpbin.org/get -X POST --obscure-unknown-option -H X-Paw:value', Immutable.List([
+      new CurlRequest({
+        url: 'http://httpbin.org/get',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          'X-Paw': 'value'
+        })
+      })
+    ]))
+  }
+
+  testIgnoreUnknownOptionsMultipleUrls() {
+    this.__testCurlRequests('curl http://httpbin.org/get -X POST -H X-Paw:value --obscure-unknown-option -H Content-Type:application/json http://httpbin.org/post', Immutable.List([
+      new CurlRequest({
+        url: 'http://httpbin.org/get',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          'X-Paw': 'value',
+          'Content-Type': 'application/json'
+        })
+      }),
+      new CurlRequest({
+        url: 'http://httpbin.org/post',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          'X-Paw': 'value',
+          'Content-Type': 'application/json'
+        })
       })
     ]))
   }

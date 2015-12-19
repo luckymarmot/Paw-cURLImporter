@@ -52,6 +52,13 @@ export default class CurlParser {
     return null
   }
 
+  _getLastArg() {
+    if ((this.idx - 1) < this.args.count()) {
+      return this.args.get(this.idx - 1)
+    }
+    return null
+  }
+
   _popArg() {
     if (this.idx < this.args.count()) {
       return this.args.get(this.idx++)
@@ -71,6 +78,12 @@ export default class CurlParser {
     while ((arg = this._popArg()) != null) {
       if (arg.toLowerCase() === 'curl') {
         this._parseCurlCommand()
+
+        // if last argument was the -: --next option, continue parsing curl
+        const lastArg = this._getLastArg()
+        if (lastArg === '-:' || lastArg === '--next') {
+          this._parseCurlCommand()
+        }
       }
     }
   }
@@ -81,6 +94,9 @@ export default class CurlParser {
     let arg
     while ((arg = this._popArg()) != null) {
       if (TOKEN_BREAK.includes(arg)) {
+        break;
+      }
+      else if (arg === '-:' || arg === '--next') {
         break;
       }
       else if (arg === '-X' || arg === '--request') {
@@ -129,6 +145,10 @@ export default class CurlParser {
                arg === '--ntlm' ||
                arg === '--negotiate') {
         request = this._parseAuth(request, arg)
+      }
+      else if (arg.match(/^\-/)) {
+        // ignore unknown arguments
+        continue;
       }
       else {
         request = this._parseUrl(request, arg)
