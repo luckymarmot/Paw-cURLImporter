@@ -5,7 +5,7 @@ import fs from 'fs'
 import ShellTokenizer from '../ShellTokenizer'
 
 @registerTest
-class TestTokenSplitting extends UnitTest {
+class TestShellTokenizer extends UnitTest {
   testExample() {
     this.__testSimpleSpaceSplit('toto titi"foo"bar foo\\ bar', ['toto', 'titifoobar', 'foo bar'])
   }
@@ -96,8 +96,8 @@ class TestTokenSplitting extends UnitTest {
   }
 
   __testSimpleSpaceSplit(input, output) {
-    let parser = new ShellTokenizer()
-    let tokens = parser.tokenize(input)
+    let tokenizer = new ShellTokenizer()
+    let tokens = tokenizer.tokenize(input)
     console.log('>>>>>>', input, output, tokens.toJS());
     this.assertEqual(tokens.count(), Immutable.fromJS(output).count())
     this.assertTrue(Immutable.is(tokens, Immutable.fromJS(output)))
