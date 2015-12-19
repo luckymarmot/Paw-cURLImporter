@@ -83,13 +83,19 @@ export default class CurlParser {
         request = this._parseUrlEncodedData(request, '--data')
       }
       else if (arg === '--data-binary') {
-        request = this._parseUrlEncodedData(request, '--data-binary')
+        request = this._parseUrlEncodedData(request, arg)
       }
       else if (arg === '--data-raw') {
-        request = this._parseUrlEncodedData(request, '--data-raw')
+        request = this._parseUrlEncodedData(request, arg)
       }
       else if (arg === '--data-urlencode') {
-        request = this._parseUrlEncodedData(request, '--data-urlencode')
+        request = this._parseUrlEncodedData(request, arg)
+      }
+      else if (arg === '--compressed') {
+        request = this._parseCompressed(request)
+      }
+      else if (arg === '-A' || arg === '--user-agent') {
+        request = this._parseUserAgent(request)
       }
       else {
         urls = urls.push(this._cleanUrl(arg))
@@ -111,6 +117,12 @@ export default class CurlParser {
     return url
   }
 
+  _normalizeHeader(string) {
+    return string.replace(/[^\-]+/g, (m) => {
+      return m[0].toUpperCase() + m.substr(1).toLowerCase()
+    })
+  }
+
   _resolveFileReference(string, stripNewlines) {
     const m = string.match(/^\@(.*)$/)
     if (m) {
@@ -128,12 +140,30 @@ export default class CurlParser {
     if (!m) {
       throw new Error('Invalid -H/--header value: ' + arg)
     }
-    return request.setIn(['headers', m[1]], m[2])
+    return request.setIn(['headers', this._normalizeHeader(m[1])], m[2])
   }
 
   _parseMethod(request) {
-    const arg = this._popArg()
-    return request.set('method', arg)
+    return request.set('method', this._popArg())
+  }
+
+  _parseCompressed(request) {
+    let acceptEncoding = request.getIn(['headers', 'Accept-Encoding'])
+    if (!acceptEncoding) {
+      acceptEncoding = ''
+    }
+    if (!acceptEncoding.includes('gzip')) {
+      if (acceptEncoding.length > 0) {
+        acceptEncoding += ';'
+      }
+      acceptEncoding += 'gzip'
+      request = request.setIn(['headers', 'Accept-Encoding'], acceptEncoding)
+    }
+    return request
+  }
+
+  _parseUserAgent(request) {
+    return request.setIn(['headers', 'User-Agent'], this._popArg())
   }
 
   _parseMultipartFormData(request) {
@@ -208,8 +238,30 @@ export default class CurlParser {
         };
       }
     }
+    else if (option === '--data-urlencode') {
+      let m = arg.match(/^([^\=]+)?\=(.*)$/)
+      // =content
+      // name=content
+      if (m) {
+        request = request.set('body', request.get('body').push(new CurlKeyValue({
+          key: (m[1] !== undefined ? m[1] : m[2]),
+          value: (m[1] !== undefined ? m[2] : null)
+        })))
+      }
+      // content
+      // @filename
+      // name@filename
+      else {
+        m = arg.match(/^([^\@]+)?(.+)?$/)
+        let value = m[2] !== undefined ? this._resolveFileReference(m[2], false) : null
+        request = request.set('body', request.get('body').push(new CurlKeyValue({
+          key: (m[1] !== undefined ? m[1] : value),
+          value: (m[1] !== undefined ? value : null)
+        })))
+      }
+    }
     else {
-      throw new Error('!!! NOT IMPLEMENTED')
+      throw new Error('Invalid option ' + option)
     }
 
     // set method if not set
