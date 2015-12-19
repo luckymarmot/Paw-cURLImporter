@@ -3,7 +3,8 @@ import Immutable from 'immutable'
 import ShellTokenizer from './ShellTokenizer'
 
 export class CurlFileReference extends Immutable.Record({
-  filepath: null
+  filepath: null,
+  stripNewlines: false
 }) { }
 
 export class CurlKeyValue extends Immutable.Record({
@@ -110,11 +111,12 @@ export default class CurlParser {
     return url
   }
 
-  _resolveFileReference(string) {
+  _resolveFileReference(string, stripNewlines) {
     const m = string.match(/^\@(.*)$/)
     if (m) {
       return new CurlFileReference({
-        filepath: m[1]
+        filepath: m[1],
+        stripNewlines: stripNewlines
       })
     }
     return string
@@ -176,12 +178,15 @@ export default class CurlParser {
 
     const arg = this._popArg()
     
-    if (option === '--data' || option === '--data-raw') {
+    if (option === '--data' ||
+        option === '--data-raw' ||
+        option === '--data-binary') {
       let value = arg
 
       // resolve file reference @filename
-      if (option === '--data') {
-        value = this._resolveFileReference(value)
+      if (option === '--data' || option === '--data-binary') {
+        const stripNewlines = (option !== '--data-binary')
+        value = this._resolveFileReference(value, stripNewlines)
       }
 
       // if file reference

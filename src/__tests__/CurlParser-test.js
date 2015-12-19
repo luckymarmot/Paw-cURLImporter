@@ -198,7 +198,7 @@ class TestCurlParser extends UnitTest {
   }
 
   // 
-  // testing -d --data --data-binary options
+  // testing -d --data --data-ascii --data-binary --data-raw options
   // 
 
   testFormDataKeyValue() {
@@ -314,13 +314,82 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  testFormDataKeyValueDataAscii() {
+    this.__testCurlRequest('curl http://httpbin.org/get --data-ascii key=value', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'value'})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueDataAsciiPlain() {
+    this.__testCurlRequest('curl http://httpbin.org/get --data-ascii sometext', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'sometext', value: null})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueDataBinary() {
+    this.__testCurlRequest('curl http://httpbin.org/get --data-binary key=value', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'value'})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueDataBinaryPlain() {
+    this.__testCurlRequest('curl http://httpbin.org/get --data-binary sometext', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'sometext', value: null})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueDataRaw() {
+    this.__testCurlRequest('curl http://httpbin.org/get --data-raw key=value', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'value'})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueDataRawPlain() {
+    this.__testCurlRequest('curl http://httpbin.org/get --data-raw sometext', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'sometext', value: null})
+      ])
+    }))
+  }
+
   testFormDataKeyValueFileReference() {
     this.__testCurlRequest('curl http://httpbin.org/get -d @filename.txt', new CurlRequest({
       url: 'http://httpbin.org/get',
       method: 'POST',
       bodyType: 'urlEncoded',
       body: Immutable.List([
-        new CurlKeyValue({key: new CurlFileReference({filepath: 'filename.txt'}), value: null})
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: true}),
+          value: null
+        })
       ])
     }))
   }
@@ -331,12 +400,29 @@ class TestCurlParser extends UnitTest {
       method: 'POST',
       bodyType: 'urlEncoded',
       body: Immutable.List([
-        new CurlKeyValue({key: new CurlFileReference({filepath: 'filename.txt'}), value: null})
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: true}),
+          value: null
+        })
       ])
     }))
   }
 
-  testFormDataKeyValueNoFileReferenceInRaw() {
+  testFormDataKeyValueFileReferenceDataBinaryNoStripNewlines() {
+    this.__testCurlRequest('curl http://httpbin.org/get --data-binary @filename.txt', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: false}),
+          value: null
+        })
+      ])
+    }))
+  }
+
+  testFormDataKeyValueNoFileReferenceInDataRaw() {
     this.__testCurlRequest('curl http://httpbin.org/get --data-raw @filename.txt', new CurlRequest({
       url: 'http://httpbin.org/get',
       method: 'POST',
@@ -353,8 +439,14 @@ class TestCurlParser extends UnitTest {
       method: 'POST',
       bodyType: 'urlEncoded',
       body: Immutable.List([
-        new CurlKeyValue({key: new CurlFileReference({filepath: 'filename.txt'}), value: null}),
-        new CurlKeyValue({key: new CurlFileReference({filepath: 'filename2.txt'}), value: null})
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: true}),
+          value: null
+        }),
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'filename2.txt', stripNewlines: true}),
+          value: null
+        })
       ])
     }))
   }
@@ -365,10 +457,63 @@ class TestCurlParser extends UnitTest {
       method: 'POST',
       bodyType: 'urlEncoded',
       body: Immutable.List([
-        new CurlKeyValue({key: new CurlFileReference({filepath: 'filename.txt'}), value: null}),
-        new CurlKeyValue({key: new CurlFileReference({filepath: 'filename2.txt'}), value: null}),
-        new CurlKeyValue({key: 'name', value: 'Paw'}),
-        new CurlKeyValue({key: 'key2', value: 'value2'}),
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: true}),
+          value: null
+        }),
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'filename2.txt', stripNewlines: true}),
+          value: null
+        }),
+        new CurlKeyValue({
+          key: 'name',
+          value: 'Paw'
+        }),
+        new CurlKeyValue({
+          key: 'key2',
+          value: 'value2'
+        }),
+      ])
+    }))
+  }
+
+  testFormDataKeyValueMixOfAll() {
+    this.__testCurlRequest('curl http://httpbin.org/get --data $\'toto\\ntiti\' --data-binary @myfile.txt --data-raw @myfile.txt --data-ascii @myfile.txt -d @myfile.txt -d name=Paw -d key2=value2 -H Content-Type:text/plain', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      headers: Immutable.OrderedMap({
+        'Content-Type':'text/plain'
+      }),
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({
+          key: 'toto\ntiti',
+          value: null
+        }),
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'myfile.txt', stripNewlines: false}),
+          value: null
+        }),
+        new CurlKeyValue({
+          key: '@myfile.txt',
+          value: null
+        }),
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'myfile.txt', stripNewlines: true}),
+          value: null
+        }),
+        new CurlKeyValue({
+          key: new CurlFileReference({filepath: 'myfile.txt', stripNewlines: true}),
+          value: null
+        }),
+        new CurlKeyValue({
+          key: 'name',
+          value: 'Paw'
+        }),
+        new CurlKeyValue({
+          key: 'key2',
+          value: 'value2'
+        }),
       ])
     }))
   }
@@ -384,7 +529,7 @@ class TestCurlParser extends UnitTest {
   __testCurlRequests(input, expected) {
     let parser = new CurlParser()
     let requests = parser.parse(input)
-    console.log('expected:', expected, '\nrequests:', requests)
+    console.log('expected:', JSON.stringify(expected), '\nrequests:', JSON.stringify(requests))
     this.assertTrue(Immutable.is(requests, expected))
   }
 }
