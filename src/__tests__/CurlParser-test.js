@@ -335,6 +335,19 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  testFormDataKeyValuePlainString() {
+    this.__testCurlRequest('curl http://httpbin.org/get -d \'{"key":"va=l&u=e"}\'', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: '{"key":"va', value: 'l'}),
+        new CurlKeyValue({key: 'u', value: 'e"}'})
+      ]),
+      bodyString: '{"key":"va=l&u=e"}'
+    }), true /* compare bodyString */)
+  }
+
   testFormDataKeyValueDataAscii() {
     this.__testCurlRequest('curl http://httpbin.org/get --data-ascii key=value', new CurlRequest({
       url: 'http://httpbin.org/get',
@@ -1328,13 +1341,22 @@ class TestCurlParser extends UnitTest {
   // helpers
   // 
 
-  __testCurlRequest(input, expected) {
-    this.__testCurlRequests(input, Immutable.List([expected]))
+  __testCurlRequest(input, expected, compareBodyString = false) {
+    this.__testCurlRequests(input, Immutable.List([expected]), compareBodyString)
   }
 
-  __testCurlRequests(input, expected) {
+  __testCurlRequests(input, expected, compareBodyString = false) {
     const parser = new CurlParser()
-    const requests = parser.parse(input)
+    let requests = parser.parse(input)
+
+    // remove bodyString from request if we don't want to compare it here
+    requests = requests.map(request => {
+      if (!compareBodyString) {
+        return request.set('bodyString', null)
+      }
+      return request
+    })
+
     console.log('expected:', JSON.stringify(expected), '\nrequests:', JSON.stringify(requests))
     this.assertTrue(Immutable.is(requests, expected))
   }

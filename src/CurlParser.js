@@ -23,6 +23,7 @@ export class CurlRequest extends Immutable.Record({
   method: null,
   headers: Immutable.OrderedMap(),
   bodyType: null,
+  bodyString: null,
   body: null,
   auth: null
 }) {
@@ -286,7 +287,8 @@ export default class CurlParser {
       }
       request = request.merge({
         bodyType: 'urlEncoded',
-        body: Immutable.List()
+        body: Immutable.List(),
+        bodyString: ''
       })
     }
 
@@ -347,6 +349,14 @@ export default class CurlParser {
     else {
       throw new Error('Invalid option ' + option)
     }
+
+    // add body as string
+    let bodyString = request.get('bodyString')
+    if (bodyString.length > 0) {
+      bodyString += '&'
+    }
+    bodyString += arg
+    request = request.set('bodyString', bodyString)
 
     // set method if not set
     if (request.get('method') === null) {

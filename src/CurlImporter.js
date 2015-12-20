@@ -69,6 +69,7 @@ class CurlImporter {
     const auth = curlRequest.get('auth')
     const bodyType = curlRequest.get('bodyType')
     const body = curlRequest.get('body')
+    const contentType = headers.get('Content-Type')
 
     // url + method
     let pawRequest = context.createRequest(
@@ -107,6 +108,23 @@ class CurlImporter {
       // this is not form url encoded, but a plain body string or file
       if (body.count() === 1 && !body.getIn([0, 'value'])) {
         pawRequest.body = this._toDynamicString(body.getIn([0, 'key']), true, true)
+      }
+      // if no Content-Type is set, or not set to application/x-www-form-urlencoded
+      // consider the body as a plain string
+      else if (!contentType || contentType !== 'application/x-www-form-urlencoded') {
+        const bodyString = curlRequest.get('bodyString')
+        if (contentType.includes('json')) {
+          try {
+            pawRequest.jsonBody = JSON.parse(bodyString)
+          }
+          catch (e) {
+            console.error('Request seems to have a JSON body, but JSON parsing failed')
+            pawRequest.body = bodyString
+          }
+        }
+        else {
+          pawRequest.body = bodyString
+        }
       }
       else {
         const keyValues = body.map(keyValue => {
