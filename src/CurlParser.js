@@ -165,7 +165,7 @@ export default class CurlParser {
   }
 
   _parseUrl(request, url) {
-    const m = url.match(/^(\w+\:\/\/)?(?:([^\:\/]+)(?:\:([^\@]+)?)?\@)?(.*)$/)
+    const m = url.match(/^(\w+\:\/\/)?(?:([^\:\/]+)(?:\:([^\@]+)?)?\@)?([\s\S]*)$/)
     if (m[2] && !request.getIn(['auth', 'password'])) {
       request = request.setAuthParams({
         username:m[2],
@@ -183,7 +183,7 @@ export default class CurlParser {
   }
 
   _resolveFileReference(string, stripNewlines) {
-    const m = string.match(/^\@(.*)$/)
+    const m = string.match(/^\@([\s\S]*)$/)
     if (m) {
       return new CurlFileReference({
         filepath: m[1],
@@ -195,7 +195,7 @@ export default class CurlParser {
 
   _parseHeader(request) {
     const arg = this._popArg()
-    const m = arg.match(/^([^\:\s]+)\s*\:\s*(.*)$/)
+    const m = arg.match(/^([^\:\s]+)\s*\:\s*([\s\S]*)$/)
     if (!m) {
       throw new Error('Invalid -H/--header value: ' + arg)
     }
@@ -236,7 +236,7 @@ export default class CurlParser {
   }
 
   _parseUser(request) {
-    const m = this._popArg().match(/([^\:]+)(?:\:(.*))?/)
+    const m = this._popArg().match(/([^\:]+)(?:\:([\s\S]*))?/)
     return request.setAuthParams({
       username:m[1],
       password:(m[2] ? m[2] : null)
@@ -314,7 +314,7 @@ export default class CurlParser {
         let components = value.split('&')
         for (let i = 0; i < components.length; i++) {
           const component = components[i]
-          let m = component.match(/([^\=]+)(?:\=(.*))?/)
+          let m = component.match(/^([^\=]+)(?:\=([\s\S]*))?$/)
           request = request.set('body', request.get('body').push(new CurlKeyValue({
             key: decodeURIComponent(m[1]),
             value: (m[2] !== undefined ? decodeURIComponent(m[2]) : null)
@@ -323,7 +323,7 @@ export default class CurlParser {
       }
     }
     else if (option === '--data-urlencode') {
-      let m = arg.match(/^([^\=]+)?\=(.*)$/)
+      let m = arg.match(/^([^\=]+)?\=([\s\S]*)$/)
       // =content
       // name=content
       if (m) {
@@ -336,7 +336,7 @@ export default class CurlParser {
       // @filename
       // name@filename
       else {
-        m = arg.match(/^([^\@]+)?(.+)?$/)
+        m = arg.match(/^([^\@]+)?([\s\S]+)?$/)
         let value = m[2] !== undefined ? this._resolveFileReference(m[2], false) : null
         request = request.set('body', request.get('body').push(new CurlKeyValue({
           key: (m[1] !== undefined ? m[1] : value),

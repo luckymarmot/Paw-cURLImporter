@@ -539,6 +539,76 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  testFormDataKeyValueNewlineInDollarEscape() {
+    this.__testCurlRequest('curl http://httpbin.org/post -d $\'key=val\nue\'', new CurlRequest({
+      url: 'http://httpbin.org/post',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'val\nue'})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueNewlineInSimpleQuoteEscape() {
+    this.__testCurlRequest('curl http://httpbin.org/post -d \'key=val\nue\'', new CurlRequest({
+      url: 'http://httpbin.org/post',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'val\nue'})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueNewlineInDoubleQuoteEscape() {
+    this.__testCurlRequest('curl http://httpbin.org/post -d "key=val\nue"', new CurlRequest({
+      url: 'http://httpbin.org/post',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'val\nue'})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueNewlineNoQuoteBackslashEscape() {
+    // backslash newline (with no quote) ignores the newline
+    this.__testCurlRequest('curl http://httpbin.org/post -d key=val\\\nue', new CurlRequest({
+      url: 'http://httpbin.org/post',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'value'})
+      ])
+    }))
+  }
+
+  testFormDataUrlEncodeKeyValueNewlineInDoubleQuoteEscape() {
+    this.__testCurlRequest('curl http://httpbin.org/post --data-urlencode "key=val\nue"', new CurlRequest({
+      url: 'http://httpbin.org/post',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'val\nue'})
+      ])
+    }))
+  }
+
+  testFormDataUrlEncodeFileNameKeyValueNewlineInDoubleQuoteEscape() {
+    this.__testCurlRequest('curl http://httpbin.org/post --data-urlencode name@"file\nname"', new CurlRequest({
+      url: 'http://httpbin.org/post',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'name', value: new CurlFileReference({
+          filepath: "file\nname",
+          stripNewlines: false
+        })})
+      ])
+    }))
+  }
+
   // 
   // testing --data-urlencode
   // 

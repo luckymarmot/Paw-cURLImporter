@@ -31,6 +31,21 @@ This importer does not support the full cURL syntax. Supported arguments are:
 
 Do to OS X sandboxing, Paw cannot read from local files. You must embed all values directly in your curl commands.
 
+## Examples
+
+### Basic Auth
+
+```shell
+curl https://myuser:mypassword@httpbin.org/get
+curl https://httpbin.org/get -u myuser:mypassword
+```
+
+### `application/json
+
+```shell
+curl http://httpbin.org/post -d '{"key":"va=l&u=e"}' -H Content-Type:application/json
+```
+
 ## Development
 
 ### Build & Install
