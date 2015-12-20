@@ -1337,6 +1337,15 @@ class TestCurlParser extends UnitTest {
     ]))
   }
 
+  testIgnoreUnknownOptionOutput() {
+    this.__testCurlRequests('curl --output outputfile.txt http://httpbin.org/get -X POST', Immutable.List([
+      new CurlRequest({
+        url: 'http://httpbin.org/get',
+        method: 'POST'
+      })
+    ]))
+  }
+
   // 
   // helpers
   // 

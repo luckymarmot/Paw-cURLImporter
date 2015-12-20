@@ -147,6 +147,75 @@ export default class CurlParser {
                arg === '--negotiate') {
         request = this._parseAuth(request, arg)
       }
+      else if (arg === '-c' || arg === '--cookie-jar' ||
+               arg === '-C' || arg === '--continue-at' ||
+               arg === '-D' || arg === '--dump-header' ||
+               arg === '-E' || arg === '--cert' ||
+               arg === '-K' || arg === '--config' ||
+               arg === '-o' || arg === '--output' ||
+               arg === '-r' || arg === '--range' ||
+               arg === '-t' || arg === '--telnet-option' ||
+               arg === '-T' || arg === '--upload-file' ||
+               arg === '-U' || arg === '--proxy-user' ||
+               arg === '-w' || arg === '--write-out' ||
+               arg === '-x' || arg === '--proxy' ||
+               arg === '-y' || arg === '--speed-time' ||
+               arg === '-Y' || arg === '--speed-limit' ||
+               arg === '-z' || arg === '--time-cond' ||
+               arg === '--ciphers' ||
+               arg === '--connect-timeout' ||
+               arg === '--dns-interface' ||
+               arg === '--dns-ipv4-addr' ||
+               arg === '--dns-ipv6-addr' ||
+               arg === '--dns-servers' ||
+               arg === '--engine' ||
+               arg === '--egd-file' ||
+               arg === '--expect100-timeout' ||
+               arg === '--cert-type' ||
+               arg === '--cacert' ||
+               arg === '--capath' ||
+               arg === '--pinnedpubkey' ||
+               arg === '--hostpubmd5' ||
+               arg === '--interface' ||
+               arg === '--keepalive-time' ||
+               arg === '--key' ||
+               arg === '--key-type' ||
+               arg === '--libcurl' ||
+               arg === '--limit-rate' ||
+               arg === '--local-port' ||
+               arg === '--login-options' ||
+               arg === '--max-filesize' ||
+               arg === '--max-redirs' ||
+               arg === '--noproxy' ||
+               arg === '--proxy-header' ||
+               arg === '--pass' ||
+               arg === '--proto' ||
+               arg === '--proto-default' ||
+               arg === '--proto-redir' ||
+               arg === '--proxy-service-name' ||
+               arg === '--proxy1.0' ||
+               arg === '--pubkey' ||
+               arg === '--random-file' ||
+               arg === '--resolve' ||
+               arg === '--retry' ||
+               arg === '--retry-delay' ||
+               arg === '--retry-max-time' ||
+               arg === '--service-name' ||
+               arg === '--socks4' ||
+               arg === '--socks4a' ||
+               arg === '--socks5-hostname' ||
+               arg === '--socks5' ||
+               arg === '--socks5-gssapi-service' ||
+               arg === '--stderr' ||
+               arg === '--tlsauthtype' ||
+               arg === '--tlspassword' ||
+               arg === '--tlsuser' ||
+               arg === '--trace' ||
+               arg === '--trace-ascii' ||
+               arg === '--unix-socket') {
+        // unknown options, but we consume one token
+        this._popArg()
+      }
       else if (arg.match(/^\-/)) {
         // ignore unknown arguments
         continue;
