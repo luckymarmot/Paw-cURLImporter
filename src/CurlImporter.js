@@ -44,7 +44,7 @@ class CurlImporter {
     // resolve file references
     if (resolveFileRefs) {
       const resolvedString = this._resolveFileReference(string)
-      if (resolvedString instanceof DynamicString) {
+      if ("string" !== typeof resolvedString) {
         return resolvedString
       }
     }
