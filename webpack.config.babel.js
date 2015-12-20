@@ -12,7 +12,7 @@ const config = {
     './src/CurlImporter.js'
   ],
   output:{
-    path: path.join(__dirname, './build'),
+    path: path.join(__dirname, './build/com.luckymarmot.PawExtensions.cURLImporter'),
     pathInfo: true,
     publicPath: '/build/',
     filename: name+'.js'

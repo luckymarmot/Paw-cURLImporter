@@ -9,4 +9,10 @@ clean:
 
 install: clean build
 	mkdir -p "$(extensions_dir)$(identifier)/"
-	cp -r ./build/* "$(extensions_dir)$(identifier)/"
+	cp -r ./build/$(identifier)/* "$(extensions_dir)$(identifier)/"
+
+test:
+	npm test
+
+archive: build
+	cd ./build/; zip -r cURLImporter.zip "$(identifier)/"
