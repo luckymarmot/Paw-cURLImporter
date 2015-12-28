@@ -66,10 +66,34 @@ export default class CurlParser {
     return null
   }
 
+  _tokenize(string) {
+    let args = new ShellTokenizer().tokenize(string)
+
+    // clean arguments to separate stuff like -XPOST in two tokens -X POST
+    let cleanedArgs = []
+    args.forEach(arg => {
+      let m = arg.match(/^(\-\w)(.+)$/)
+      if (m) {
+        cleanedArgs.push(m[1])
+        cleanedArgs.push(m[2])
+      }
+      else {
+        cleanedArgs.push(arg)
+      }
+    })
+    args = Immutable.List(cleanedArgs)
+
+    return args
+  }
+
   parse(string) {
+    // tokenize
+    this.args = this._tokenize(string)
+
+    // parse
     this.idx = 0
-    this.args = new ShellTokenizer().tokenize(string)
     this._parseAll()
+
     return this.requests
   }
 

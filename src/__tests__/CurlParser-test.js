@@ -136,6 +136,20 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  testMethodGETOneToken() {
+    this.__testCurlRequest('curl http://httpbin.org/get -XGET', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET'
+    }))
+  }
+
+  testMethodPOSTOneToken() {
+    this.__testCurlRequest('curl http://httpbin.org/post -XPOST', new CurlRequest({
+      url: 'http://httpbin.org/post',
+      method: 'POST'
+    }))
+  }
+
   // 
   // testing -I --head options
   // 
@@ -203,6 +217,17 @@ class TestCurlParser extends UnitTest {
 
   testFormDataSimple() {
     this.__testCurlRequest('curl http://httpbin.org/get -F key=value', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': 'value'
+      })
+    }))
+  }
+
+  testFormDataSimpleNoSpaceToken() {
+    this.__testCurlRequest('curl http://httpbin.org/get -Fkey=value', new CurlRequest({
       url: 'http://httpbin.org/get',
       method: 'POST',
       bodyType: 'formData',
@@ -427,6 +452,17 @@ class TestCurlParser extends UnitTest {
       bodyType: 'urlEncoded',
       body: Immutable.List([
         new CurlKeyValue({key: 'key', value: null})
+      ])
+    }))
+  }
+
+  testFormDataKeyValueNoSpaceOneToken() {
+    this.__testCurlRequest('curl http://httpbin.org/get -dcontent', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'content', value: null})
       ])
     }))
   }
