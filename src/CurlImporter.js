@@ -70,6 +70,7 @@ class CurlImporter {
     const bodyType = curlRequest.get('bodyType')
     const body = curlRequest.get('body')
     const contentType = headers.get('Content-Type')
+    const timeout = curlRequest.get('timeout')
 
     // url + method
     let pawRequest = context.createRequest(
@@ -147,6 +148,11 @@ class CurlImporter {
         })
         pawRequest.body = new DynamicString(dv)
       }
+    }
+
+    // timeout
+    if (timeout) {
+      pawRequest.timeout = timeout * 1000
     }
   }
 
