@@ -22,6 +22,7 @@ This importer does not support the full cURL syntax. Supported arguments are:
 * `--url` or last string, will set the url (including protocol, http etc) (see [curl --url](http://curl.haxx.se/docs/manpage.html#--url))
 * `-X, --request` define method, default to automatic (GET, or POST if body data is present) (see [curl -X](http://curl.haxx.se/docs/manpage.html#-X))
 * `-I, --head` sets the method to `HEAD` (see [curl -I](http://curl.haxx.se/docs/manpage.html#-I))
+* `-m, --max-time` sets the request timeout in seconds (see [curl -m](http://curl.haxx.se/docs/manpage.html#-m))
 
 ### Headers
 
@@ -43,11 +44,17 @@ This importer does not support the full cURL syntax. Supported arguments are:
 * `--data-raw` same as `-d, --data`, but no file references will be parsed (see [curl --data-raw](http://curl.haxx.se/docs/manpage.html#--data-raw))
 * `--data-urlencode` set body data, data will be url-encoded (see [curl --data-urlencode](http://curl.haxx.se/docs/manpage.html#--data-urlencode))
 * `-F, -form` set body as `multipart/form-data` (see [curl -F](http://curl.haxx.se/docs/manpage.html#-F))
+* `--form-string` same as `-F, -form`, but no file references will be parsed (see [curl --form-string](http://curl.haxx.se/docs/manpage.html#--form-string))
 
 ### Separators
 
 * `-:` and `--next` will separate next URLs from the options before this option (see [curl -:](http://curl.haxx.se/docs/manpage.html#-))
-* all usual shell separators will be interpreted as a new curl request (`&`, `&&`, `>`, `|`, `<`...)
+* all common shell separators will be interpreted as a new curl request (`&`, `&&`, `|`, etc.)
+* shell redirections (`>`, `2>`, etc.) will be ignored, but arguments after are still parsed (e.g. `curl httpbin.org/post > output.txt -d key=value` works) 
+
+### Short Options
+
+Short options may be joined with their value in the same argument (e.g. both `-X POST` with a space and `-XPOST` without space are valid).
 
 ### Quotes
 
