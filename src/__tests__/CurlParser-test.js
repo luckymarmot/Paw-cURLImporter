@@ -162,7 +162,7 @@ class TestCurlParser extends UnitTest {
   // testing -F --form options
   // 
 
-  testSimpleFormData() {
+  testFormDataSimple() {
     this.__testCurlRequest('curl http://httpbin.org/get -F key=value', new CurlRequest({
       url: 'http://httpbin.org/get',
       method: 'POST',
@@ -173,7 +173,18 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
-  testSimpleFormDataMethodOverrideBefore() {
+  testFormDataEmptyValue() {
+    this.__testCurlRequest('curl http://httpbin.org/get -F key=', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': ''
+      })
+    }))
+  }
+
+  testFormDataMethodOverrideBefore() {
     this.__testCurlRequest('curl http://httpbin.org/get -X PATCH -F key=value', new CurlRequest({
       url: 'http://httpbin.org/get',
       method: 'PATCH',
@@ -184,7 +195,7 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
-  testSimpleFormDataMethodOverrideAfter() {
+  testFormDataMethodOverrideAfter() {
     this.__testCurlRequest('curl http://httpbin.org/get -F key=value -X PATCH', new CurlRequest({
       url: 'http://httpbin.org/get',
       method: 'PATCH',
@@ -208,12 +219,60 @@ class TestCurlParser extends UnitTest {
   }
 
   testFormDataWithParams() {
-    this.__testCurlRequest('curl http://httpbin.org/get -F key=value;type=text/plain', new CurlRequest({
+    this.__testCurlRequest('curl http://httpbin.org/get -F $\'key=value;type=text/plain\'', new CurlRequest({
       url: 'http://httpbin.org/get',
       method: 'POST',
       bodyType: 'formData',
       body: Immutable.OrderedMap({
         'key': 'value'
+      })
+    }))
+  }
+
+  // 
+  // testing --form-string option
+  // 
+
+  testFormStringSimple() {
+    this.__testCurlRequest('curl http://httpbin.org/get --form-string key=value', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': 'value'
+      })
+    }))
+  }
+
+  testFormStringEmptyValue() {
+    this.__testCurlRequest('curl http://httpbin.org/get --form-string key=', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': ''
+      })
+    }))
+  }
+
+  testFormStringWithAtSign() {
+    this.__testCurlRequest('curl http://httpbin.org/get --form-string key=@value', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': '@value'
+      })
+    }))
+  }
+
+  testFormStringWithType() {
+    this.__testCurlRequest('curl http://httpbin.org/get --form-string $\'key=value;type=text/plain\'', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': 'value;type=text/plain'
       })
     }))
   }

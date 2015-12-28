@@ -112,6 +112,9 @@ export default class CurlParser {
       else if (arg === '-F' || arg === '--form') {
         request = this._parseMultipartFormData(request)
       }
+      else if (arg === '--form-string') {
+        request = this._parseMultipartFormString(request)
+      }      
       else if (arg === '-d' || arg === '--data' || arg === '--data-ascii') {
         request = this._parseUrlEncodedData(request, '--data')
       }
@@ -335,6 +338,34 @@ export default class CurlParser {
     const m = arg.match(/^([^\=]+)\=([^\;]*)/)
     if (!m) {
       throw new Error('Invalid -F/--form value: ' + arg)
+    }
+
+    // set body param
+    request = request.setIn(['body', m[1]], m[2])
+
+    // set method if not set
+    if (request.get('method') === null) {
+      request = request.set('method', 'POST')
+    }
+
+    return request
+  }
+
+  _parseMultipartFormString(request) {
+    // switch bodyType
+    if (request.get('bodyType') != 'formData') {
+      if (request.get('bodyType') != null) {
+        throw new Error('Different body types set in the same request')
+      }
+      request = request.merge({
+        bodyType: 'formData',
+        body: Immutable.OrderedMap()
+      })
+    }
+    const arg = this._popArg()
+    const m = arg.match(/^([^\=]+)\=([\s\S]*)$/)
+    if (!m) {
+      throw new Error('Invalid --form-string value: ' + arg)
     }
 
     // set body param
