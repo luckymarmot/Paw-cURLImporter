@@ -63,6 +63,34 @@ class TestCurlParser extends UnitTest {
   }
 
   // 
+  // testing -m --max-time options
+  // 
+
+  testMaxTimeOption() {
+    this.__testCurlRequest('curl -m 3 http://httpbin.org/get', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      timeout: 3
+    }))
+  }
+
+  testMaxTimeOptionLong() {
+    this.__testCurlRequest('curl --max-time 42 http://httpbin.org/get', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      timeout: 42
+    }))
+  }
+
+  testMaxTimeOptionLongMilliseconds() {
+    this.__testCurlRequest('curl --max-time 0.1 http://httpbin.org/get', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      timeout: 0.1
+    }))
+  }
+
+  // 
   // testing -X --request options
   // 
 

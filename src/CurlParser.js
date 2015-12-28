@@ -25,7 +25,8 @@ export class CurlRequest extends Immutable.Record({
   bodyType: null,
   bodyString: null,
   body: null,
-  auth: null
+  auth: null,
+  timeout: null
 }) {
   setAuthParams(authParams) {
     let auth = this.get('auth')
@@ -149,6 +150,9 @@ export default class CurlParser {
                arg === '--ntlm' ||
                arg === '--negotiate') {
         request = this._parseAuth(request, arg)
+      }
+      else if (arg === '-m' || arg === '--max-time') {
+        request = this._parseMaxTime(request)
       }
       else if (arg === '-c' || arg === '--cookie-jar' ||
                arg === '-C' || arg === '--continue-at' ||
@@ -321,6 +325,11 @@ export default class CurlParser {
     return request.setAuthParams({
       type:m[1]
     })
+  }
+
+  _parseMaxTime(request) {
+    const maxTime = this._popArg()
+    return request.set('timeout', parseFloat(maxTime))
   }
 
   _parseMultipartFormData(request) {
