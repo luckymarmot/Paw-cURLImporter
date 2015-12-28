@@ -102,7 +102,17 @@ class CurlImporter {
 
     // body
     if (bodyType === 'formData') {
-      pawRequest.multipartBody = body.toJS()
+      const keyValues = body.map((value, key) => {
+        return [
+          this._toDynamicString(key, true, true),
+          this._toDynamicString(value, true, true),
+          true
+        ]
+      }).toArray()
+      const dv = new DynamicValue("com.luckymarmot.BodyMultipartFormDataDynamicValue", {
+        keyValues: keyValues
+      })
+      pawRequest.body = new DynamicString(dv)
     }
     else if (bodyType === 'urlEncoded') {
       // this is not form url encoded, but a plain body string or file
@@ -113,7 +123,7 @@ class CurlImporter {
       // consider the body as a plain string
       else if (!contentType || contentType !== 'application/x-www-form-urlencoded') {
         const bodyString = curlRequest.get('bodyString')
-        if (contentType.includes('json')) {
+        if (contentType && contentType.includes('json')) {
           try {
             pawRequest.jsonBody = JSON.parse(bodyString)
           }
