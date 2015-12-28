@@ -229,6 +229,28 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  testFormDataFileAttachedAsFileUpload() {
+    this.__testCurlRequest('curl http://httpbin.org/get -F key=@filename.txt', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': new CurlFileReference({filepath: 'filename.txt', convert:null})
+      })
+    }))
+  }
+
+  testFormDataFileAttachedAsText() {
+    this.__testCurlRequest('curl http://httpbin.org/get -F "key=<filename.txt"', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': new CurlFileReference({filepath: 'filename.txt', convert:null})
+      })
+    }))
+  }
+
   // 
   // testing --form-string option
   // 
@@ -262,6 +284,17 @@ class TestCurlParser extends UnitTest {
       bodyType: 'formData',
       body: Immutable.OrderedMap({
         'key': '@value'
+      })
+    }))
+  }
+
+  testFormStringWithLessThanSign() {
+    this.__testCurlRequest('curl http://httpbin.org/get --form-string $\'key=<value\'', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'formData',
+      body: Immutable.OrderedMap({
+        'key': '<value'
       })
     }))
   }

@@ -255,8 +255,8 @@ export default class CurlParser {
     })
   }
 
-  _resolveFileReference(string, convert) {
-    const m = string.match(/^\@([\s\S]*)$/)
+  _resolveFileReference(string, convert = null, regex = /^\@([\s\S]*)$/) {
+    const m = string.match(regex)
     if (m) {
       return new CurlFileReference({
         filepath: m[1],
@@ -341,7 +341,8 @@ export default class CurlParser {
     }
 
     // set body param
-    request = request.setIn(['body', m[1]], m[2])
+    const value = m[2] !== undefined ? this._resolveFileReference(m[2], null, /^[\@\<]([\s\S]*)$/) : null
+    request = request.setIn(['body', m[1]], value)
 
     // set method if not set
     if (request.get('method') === null) {
