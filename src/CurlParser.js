@@ -38,8 +38,6 @@ export class CurlRequest extends Immutable.Record({
   }
 }
 
-const TOKEN_BREAK = Immutable.List(['|', '>', '1>', '2>', '&>', ';', '&', '&&'])
-
 export default class CurlParser {
   constructor() {
     this.requests = Immutable.List()
@@ -95,8 +93,19 @@ export default class CurlParser {
     let urls = Immutable.List()
     let arg
     while ((arg = this._popArg()) != null) {
-      if (TOKEN_BREAK.includes(arg)) {
+      if (arg === '|' ||
+          arg === ';' ||
+          arg === '&' ||
+          arg === '&&') {
+        // shell command break tokens
         break;
+      }
+      else if (arg === '>' ||
+               arg === '1>' ||
+               arg === '2>' ||
+               arg === '&>') {
+        // shell redirection tokens (arguments are consumed after)
+        this._popArg()
       }
       else if (arg === '-:' || arg === '--next') {
         break;

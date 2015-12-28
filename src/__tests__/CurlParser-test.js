@@ -1382,6 +1382,20 @@ class TestCurlParser extends UnitTest {
     ]))
   }
 
+  testShellOptionsAfterRedirect() {
+    this.__testCurlRequests('curl httpbin.org/post -d key=value > filename -d key2=value2', Immutable.List([
+      new CurlRequest({
+        url: 'http://httpbin.org/post',
+        method: 'POST',
+        bodyType: 'urlEncoded',
+        body: Immutable.List([
+          new CurlKeyValue({key: 'key', value: 'value'}),
+          new CurlKeyValue({key: 'key2', value: 'value2'})
+        ])
+      })
+    ]))
+  }
+
   testShellChainWithSemiColon() {
     this.__testCurlRequests('curl http://httpbin.org/get ; curl -X POST http://httpbin.org/post', Immutable.List([
       new CurlRequest({
