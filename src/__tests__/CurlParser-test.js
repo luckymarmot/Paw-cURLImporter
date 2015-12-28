@@ -480,7 +480,7 @@ class TestCurlParser extends UnitTest {
       bodyType: 'urlEncoded',
       body: Immutable.List([
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: true}),
+          key: new CurlFileReference({filepath: 'filename.txt', convert: 'stripNewlines'}),
           value: null
         })
       ])
@@ -494,7 +494,7 @@ class TestCurlParser extends UnitTest {
       bodyType: 'urlEncoded',
       body: Immutable.List([
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: true}),
+          key: new CurlFileReference({filepath: 'filename.txt', convert: 'stripNewlines'}),
           value: null
         })
       ])
@@ -508,7 +508,7 @@ class TestCurlParser extends UnitTest {
       bodyType: 'urlEncoded',
       body: Immutable.List([
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: false}),
+          key: new CurlFileReference({filepath: 'filename.txt', convert: null}),
           value: null
         })
       ])
@@ -533,11 +533,11 @@ class TestCurlParser extends UnitTest {
       bodyType: 'urlEncoded',
       body: Immutable.List([
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: true}),
+          key: new CurlFileReference({filepath: 'filename.txt', convert: 'stripNewlines'}),
           value: null
         }),
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'filename2.txt', stripNewlines: true}),
+          key: new CurlFileReference({filepath: 'filename2.txt', convert: 'stripNewlines'}),
           value: null
         })
       ])
@@ -551,11 +551,11 @@ class TestCurlParser extends UnitTest {
       bodyType: 'urlEncoded',
       body: Immutable.List([
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: true}),
+          key: new CurlFileReference({filepath: 'filename.txt', convert: 'stripNewlines'}),
           value: null
         }),
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'filename2.txt', stripNewlines: true}),
+          key: new CurlFileReference({filepath: 'filename2.txt', convert: 'stripNewlines'}),
           value: null
         }),
         new CurlKeyValue({
@@ -584,7 +584,7 @@ class TestCurlParser extends UnitTest {
           value: null
         }),
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'myfile.txt', stripNewlines: false}),
+          key: new CurlFileReference({filepath: 'myfile.txt', convert: null}),
           value: null
         }),
         new CurlKeyValue({
@@ -592,11 +592,11 @@ class TestCurlParser extends UnitTest {
           value: null
         }),
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'myfile.txt', stripNewlines: true}),
+          key: new CurlFileReference({filepath: 'myfile.txt', convert: 'stripNewlines'}),
           value: null
         }),
         new CurlKeyValue({
-          key: new CurlFileReference({filepath: 'myfile.txt', stripNewlines: true}),
+          key: new CurlFileReference({filepath: 'myfile.txt', convert: 'stripNewlines'}),
           value: null
         }),
         new CurlKeyValue({
@@ -675,7 +675,7 @@ class TestCurlParser extends UnitTest {
       body: Immutable.List([
         new CurlKeyValue({key: 'name', value: new CurlFileReference({
           filepath: "file\nname",
-          stripNewlines: false
+          convert: 'urlEncode'
         })})
       ])
     }))
@@ -728,7 +728,7 @@ class TestCurlParser extends UnitTest {
       method: 'POST',
       bodyType: 'urlEncoded',
       body: Immutable.List([
-        new CurlKeyValue({key: new CurlFileReference({filepath: 'filename.txt', stripNewlines: false}), value: null})
+        new CurlKeyValue({key: new CurlFileReference({filepath: 'filename.txt', convert: 'urlEncode'}), value: null})
       ])
     }))
   }
@@ -740,7 +740,7 @@ class TestCurlParser extends UnitTest {
       method: 'POST',
       bodyType: 'urlEncoded',
       body: Immutable.List([
-        new CurlKeyValue({key: 'name', value: new CurlFileReference({filepath: 'filename.txt', stripNewlines: false})})
+        new CurlKeyValue({key: 'name', value: new CurlFileReference({filepath: 'filename.txt', convert: 'urlEncode'})})
       ])
     }))
   }

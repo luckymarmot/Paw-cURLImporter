@@ -4,7 +4,7 @@ import ShellTokenizer from './ShellTokenizer'
 
 export class CurlFileReference extends Immutable.Record({
   filepath: null,
-  stripNewlines: false
+  convert: null
 }) { }
 
 export class CurlKeyValue extends Immutable.Record({
@@ -255,12 +255,12 @@ export default class CurlParser {
     })
   }
 
-  _resolveFileReference(string, stripNewlines) {
+  _resolveFileReference(string, convert) {
     const m = string.match(/^\@([\s\S]*)$/)
     if (m) {
       return new CurlFileReference({
         filepath: m[1],
-        stripNewlines: stripNewlines
+        convert: convert
       })
     }
     return string
@@ -401,8 +401,8 @@ export default class CurlParser {
 
       // resolve file reference @filename
       if (option === '--data' || option === '--data-binary') {
-        const stripNewlines = (option !== '--data-binary')
-        value = this._resolveFileReference(value, stripNewlines)
+        const convert = (option == '--data-binary' ? null : 'stripNewlines')
+        value = this._resolveFileReference(value, convert)
       }
 
       // if file reference
@@ -439,7 +439,7 @@ export default class CurlParser {
       // name@filename
       else {
         m = arg.match(/^([^\@]+)?([\s\S]+)?$/)
-        let value = m[2] !== undefined ? this._resolveFileReference(m[2], false) : null
+        let value = m[2] !== undefined ? this._resolveFileReference(m[2], 'urlEncode') : null
         request = request.set('body', request.get('body').push(new CurlKeyValue({
           key: (m[1] !== undefined ? m[1] : value),
           value: (m[1] !== undefined ? value : null)
