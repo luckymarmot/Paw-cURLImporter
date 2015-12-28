@@ -919,6 +919,18 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  testFormDataUrlEncodeSpaceBefore() {
+    // content
+    this.__testCurlRequest('curl http://httpbin.org/get --data-urlencode \\ key=value', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'POST',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: ' key', value: 'value'})
+      ])
+    }))
+  }
+
   // 
   // testing --compressed option
   // 
@@ -1561,6 +1573,94 @@ class TestCurlParser extends UnitTest {
       new CurlRequest({
         url: 'http://httpbin.org/get',
         method: 'POST'
+      })
+    ]))
+  }
+
+  //
+  // real examples
+  //
+
+  testExamplePOSTHeadersDataUrlEncode() {
+    const input = `curl -X "POST" "https://httpbin.org/post" \\
+    -H "locale: de_DE" \\
+    -H "apikey: MYAPIKEY" \\
+    -H "Content-Type: application/x-www-form-urlencoded" \\
+    -H "Accept: application/vnd.my-vendor.api+json;version=2.5.0" \\
+    --data-urlencode "username=username" \\
+    --data-urlencode "password=test12345"`
+    console.log(input)
+    this.__testCurlRequests(input, Immutable.List([
+      new CurlRequest({
+        url: 'https://httpbin.org/post',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          "Locale": "de_DE",
+          "Apikey": "MYAPIKEY",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/vnd.my-vendor.api+json;version=2.5.0",
+        }),
+        body: Immutable.List([
+          new CurlKeyValue({key: "username", value: "username"}),
+          new CurlKeyValue({key: "password", value: "test12345"}),
+        ]),
+        bodyType: "urlEncoded"
+      })
+    ]))
+  }
+
+  testExamplePOSTHeadersDataUrlEncodeTokenStartsWithSpace() {
+    // note: this input isn't valid normally, but we try to support it as a
+    // workaround to this common user mistake
+    const input = `curl -X "POST" "https://httpbin.org/post" \\ -H "locale: de_DE" \\
+    -H "apikey: MYAPIKEY" \\
+    -H "Content-Type: application/x-www-form-urlencoded" \\
+    -H "Accept: application/vnd.my-vendor.api+json;version=2.5.0" \\
+    --data-urlencode "username=username" \\
+    --data-urlencode "password=test12345"`
+    this.__testCurlRequests(input, Immutable.List([
+      new CurlRequest({
+        url: 'https://httpbin.org/post',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          "Locale": "de_DE",
+          "Apikey": "MYAPIKEY",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/vnd.my-vendor.api+json;version=2.5.0",
+        }),
+        body: Immutable.List([
+          new CurlKeyValue({key: "username", value: "username"}),
+          new CurlKeyValue({key: "password", value: "test12345"}),
+        ]),
+        bodyType: "urlEncoded"
+      })
+    ]))
+  }
+
+  testExamplePOSTHeadersDataUrlEncodeMissingNewLine() {
+    // note: this input isn't valid normally, but we try to support it as a
+    // workaround to this common user mistake
+    const input = `curl -X "POST" "https://httpbin.org/post" \\  -H "locale: de_DE" \\
+    -H "apikey: MYAPIKEY" \\
+    -H "Content-Type: application/x-www-form-urlencoded" \\
+    -H "Accept: application/vnd.my-vendor.api+json;version=2.5.0" \\
+    --data-urlencode "username=username" \\
+    --data-urlencode "password=test12345"`
+    this.__testCurlRequests(input, Immutable.List([
+      new CurlRequest({
+        url: 'https://httpbin.org/post',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          "Locale": "de_DE",
+          "Apikey": "MYAPIKEY",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/vnd.my-vendor.api+json;version=2.5.0",
+        }),
+        body: Immutable.List([
+          new CurlKeyValue({key: "username", value: "username"}),
+          new CurlKeyValue({key: "password", value: "test12345"}),
+        ]),
+        bodyType: "urlEncoded"
       })
     ]))
   }

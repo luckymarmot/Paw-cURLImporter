@@ -67,12 +67,29 @@ export default class CurlParser {
   }
 
   _tokenize(string) {
+    // shell tokenizer gives shell arguments as curl would receive them
     let args = new ShellTokenizer().tokenize(string)
 
-    // clean arguments to separate stuff like -XPOST in two tokens -X POST
+    // clean arguments to make the curl processing easier:
+    // * cleanup spaces before -x and --xxx options
+    // * separate stuff like -XPOST in two tokens -X POST
     let cleanedArgs = []
     args.forEach(arg => {
-      let m = arg.match(/^(\-\w)(.+)$/)
+      let m
+
+      // cleanup spaces (if before an -x or --xxx option)
+      // that is mostly to accept malformed inputs, with normal valid inputs
+      // this "cleanup spaces" shouldn't be required
+      m = arg.match(/^\s+(\-[\s\S]*)$/)
+      if (m) {
+        arg = m[1]
+      }
+      if (arg.match(/^\s*$/)) {
+        return;
+      }
+
+      // try to detect -XPOST style options
+      m = arg.match(/^(\-\w)(.+)$/)
       if (m) {
         cleanedArgs.push(m[1])
         cleanedArgs.push(m[2])
