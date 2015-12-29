@@ -3,6 +3,7 @@ extensions_dir=$(HOME)/Library/Containers/com.luckymarmot.Paw/Data/Library/Appli
 
 build:
 	npm run build
+	cp README.md LICENSE ./build/$(identifier)/
 
 clean:
 	rm -Rf ./build/
