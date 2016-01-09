@@ -94,6 +94,26 @@ class TestShellTokenizer extends UnitTest {
     this.__testSimpleSpaceSplit('curl my-url&&curl', ['curl', 'my-url', '&&', 'curl'])
   }
 
+  testUnicodeSimpleOpenQuote() {
+    this.__testSimpleSpaceSplit('curl -XPOST https://httpbin.org/post --data-urlencode ‘username=username\'', ['curl', '-XPOST', 'https://httpbin.org/post', '--data-urlencode', 'username=username'])
+  }
+
+  testUnicodeSimpleCloseQuote() {
+    this.__testSimpleSpaceSplit('curl -XPOST https://httpbin.org/post --data-urlencode \'username=username’', ['curl', '-XPOST', 'https://httpbin.org/post', '--data-urlencode', 'username=username'])
+  }
+
+  testUnicodeDoubleOpenQuote() {
+    this.__testSimpleSpaceSplit('curl -XPOST https://httpbin.org/post --data-urlencode “username=username"', ['curl', '-XPOST', 'https://httpbin.org/post', '--data-urlencode', 'username=username'])
+  }
+
+  testUnicodeDoubleCloseQuote() {
+    this.__testSimpleSpaceSplit('curl -XPOST https://httpbin.org/post --data-urlencode "username=username”', ['curl', '-XPOST', 'https://httpbin.org/post', '--data-urlencode', 'username=username'])
+  }
+
+  testUnicodeMixedQuotes() {
+    this.__testSimpleSpaceSplit('curl -XPOST "https://httpbin.org/post” --”data”-‘urlencode‘ \'username=username‘', ['curl', '-XPOST', 'https://httpbin.org/post', '--data-urlencode', 'username=username'])
+  }
+
   testExamplesFromYaml() {
     const tests = JSON.parse(
       require('fs').readFileSync(__dirname + '/generated/tests.json', 'utf8')
