@@ -123,7 +123,7 @@ class MockedFunction {
 
     getCallBack = ()=> {
       return ::this.func
-    }
+    };
 }
 
 function mockFunction(target, key, descriptor) {
