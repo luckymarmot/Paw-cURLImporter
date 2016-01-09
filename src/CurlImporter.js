@@ -2,8 +2,8 @@ import CurlParser, { CurlFileReference } from './CurlParser'
 
 @registerImporter
 class CurlImporter {
-  static identifier = 'com.luckymarmot.PawExtensions.cURLImporter'
-  static title = 'cURL Importer'
+  static identifier = 'com.luckymarmot.PawExtensions.cURLImporter';
+  static title = 'cURL Importer';
 
   _resolveFileReference(value) {
     if (value instanceof CurlFileReference) {

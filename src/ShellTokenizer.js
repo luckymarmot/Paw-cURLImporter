@@ -50,15 +50,15 @@ export default class ShellTokenizer {
   }
 
   _cleanToken(token) {
-    const re = /(?:\"(?:\\\"|[^\"])*?\")|(?:\'[^\']*?\')|(?:\$\'(?:\\\'|[^\'])*?\')|(?:\\\s|[^'"\$])+|\$/gm;
+    const re = /(?:[\"“”](?:\\\"|[^\"])*?[\"“”])|(?:[\'‘’][^\']*?[\'‘’])|(?:\$[\'‘’](?:\\\'|[^\'])*?[\'‘’])|(?:\\\s|[^'"“”‘’\$])+|\$/gm;
     let output = ''
     let m
     while ((m = re.exec(token)) !== null) {
       let string = m[0]
-      if (string[0] == "'") {
+      if (string[0] == "'" || string[0] == "‘" || string[0] == "’") {
         string = string.substr(1, string.length-2)
       }
-      else if (string[0] == '"') {
+      else if (string[0] == '"' || string[0] == '“' || string[0] == '”') {
         string = this._cleanDoubleQuotedString(string.substr(1, string.length-2))
       }
       else if (string.substr(0, 2) == "$'") {
@@ -73,7 +73,7 @@ export default class ShellTokenizer {
   }
 
   tokenize(string) {
-    const re = /(?:\||\;|\&{1,2}|[12\&]?\>{1,2}|0?\<)|(?:(?:\"(?:\\\"|[^\"])*?\")|(?:\'[^\']*?\')|(?:\$\'(?:\\\'|[^\'])*?\')|(?:\\\s|[^\s\|\>\<\&\;]))+/gm;
+    const re = /(?:\||\;|\&{1,2}|[12\&]?\>{1,2}|0?\<)|(?:(?:[\"“”](?:\\\"|[^\"])*?[\"“”])|(?:[\'‘’][^\']*?[\'‘’])|(?:\$[\'‘’](?:\\\'|[^\'])*?[\'‘’])|(?:\\\s|[^\s\|\>\<\&\;]))+/gm;
     let tokens = Immutable.List()
     let m
     while ((m = re.exec(string)) !== null) {
