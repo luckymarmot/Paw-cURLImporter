@@ -124,7 +124,7 @@ class CurlImporter {
       // consider the body as a plain string
       else if (!contentType || contentType !== 'application/x-www-form-urlencoded') {
         const bodyString = curlRequest.get('bodyString')
-        if (contentType && contentType.includes('json')) {
+        if (contentType && contentType.indexOf('json') >= 0) {
           try {
             pawRequest.jsonBody = JSON.parse(bodyString)
           }

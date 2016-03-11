@@ -338,7 +338,7 @@ export default class CurlParser {
     if (!acceptEncoding) {
       acceptEncoding = ''
     }
-    if (!acceptEncoding.includes('gzip')) {
+    if (acceptEncoding.indexOf('gzip') < 0) {
       if (acceptEncoding.length > 0) {
         acceptEncoding += ';'
       }
