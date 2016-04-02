@@ -84,10 +84,10 @@ class CurlImporter {
     )
 
     // set to parent + order
-    if (this.options.parent) {
+    if (this.options && this.options.parent) {
       this.options.parent.appendChild(pawRequest)
     }
-    if (this.options.order) {
+    if (this.options && this.options.order) {
       pawRequest.order = this.options.order
       this.options.order += 1
     }
