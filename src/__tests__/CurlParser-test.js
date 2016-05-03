@@ -1665,6 +1665,56 @@ class TestCurlParser extends UnitTest {
     ]))
   }
 
+  testExampleMultipleCurlCommand() {
+    const input = `curl -X "POST" "https://httpbin.org/post" \\
+    -H "locale: de_DE" \\
+    -H "apikey: MYAPIKEY" \\
+    -H "Content-Type: application/x-www-form-urlencoded" \\
+    -H "Accept: application/vnd.my-vendor.api+json;version=2.5.0" \\
+    --data-urlencode "username=username" \\
+    --data-urlencode "password=test12345"
+    curl -X "POST" "https://httpbin.org/post" \\
+    -H "locale: en_US" \\
+    -H "apikey: MYOTHERAPIKEY" \\
+    -H "Content-Type: application/x-www-form-urlencoded" \\
+    -H "Accept: application/vnd.my-vendor.api+json;version=2.5.0" \\
+    --data-urlencode "username=username" \\
+    --data-urlencode "password=test54321"`
+    console.log(input)
+    this.__testCurlRequests(input, Immutable.List([
+      new CurlRequest({
+        url: 'https://httpbin.org/post',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          "Locale": "de_DE",
+          "Apikey": "MYAPIKEY",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/vnd.my-vendor.api+json;version=2.5.0",
+        }),
+        body: Immutable.List([
+          new CurlKeyValue({key: "username", value: "username"}),
+          new CurlKeyValue({key: "password", value: "test12345"}),
+        ]),
+        bodyType: "urlEncoded"
+      }),
+      new CurlRequest({
+        url: 'https://httpbin.org/post',
+        method: 'POST',
+        headers: Immutable.OrderedMap({
+          "Locale": "en_US",
+          "Apikey": "MYOTHERAPIKEY",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/vnd.my-vendor.api+json;version=2.5.0",
+        }),
+        body: Immutable.List([
+          new CurlKeyValue({key: "username", value: "username"}),
+          new CurlKeyValue({key: "password", value: "test54321"}),
+        ]),
+        bodyType: "urlEncoded"
+      })
+    ]))
+  }
+
   // 
   // helpers
   // 
