@@ -135,7 +135,7 @@ export default class CurlParser {
         let arg
         while ((arg = this._popArg()) != null) {
             if (arg.toLowerCase() === 'curl') {
-                this._parseCurlCommand()
+                return this._parseCurlCommand()
             }
             else if (arg === '|' ||
                     arg === ';' ||
