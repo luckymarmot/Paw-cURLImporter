@@ -117,7 +117,6 @@ export default class CurlParser {
     _parseAll() {
         let arg
         while ((arg = this._popArg()) != null) {
-            console.log('token::', arg)
             if (arg.toLowerCase() === 'curl') {
                 ::this._parseCurlCommand()
 
@@ -131,7 +130,6 @@ export default class CurlParser {
     }
 
     _parseCurlCommand() {
-        console.log('called')
         let request = new CurlRequest()
         let urls = Immutable.List()
         let arg
