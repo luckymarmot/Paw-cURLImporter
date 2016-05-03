@@ -5,6 +5,10 @@ class CurlImporter {
   static identifier = 'com.luckymarmot.PawExtensions.cURLImporter';
   static title = 'cURL Importer';
 
+  constructor() {
+    this.options = {}
+  }
+
   _resolveFileReference(value) {
     if (value instanceof CurlFileReference) {
       const dv = new DynamicValue("com.luckymarmot.FileContentDynamicValue", {})
@@ -78,6 +82,15 @@ class CurlImporter {
       curlRequest.get('method'),
       this._toDynamicString(curlRequest.get('url'), true, true),
     )
+
+    // set to parent + order
+    if (this.options && this.options.parent) {
+      this.options.parent.appendChild(pawRequest)
+    }
+    if (this.options && this.options.order) {
+      pawRequest.order = this.options.order
+      this.options.order += 1
+    }
 
     // headers
     headers.forEach((value, key) => {
@@ -160,6 +173,26 @@ class CurlImporter {
     curlRequests.forEach(curlRequest => {
       this._importPawRequest(context, curlRequest)
     })
+  }
+
+  canImport(context, items) {
+    let a = 0, b = 0
+    const re = /^[\>\$\s]*curl\s+./i
+    for (let item of items) {
+      a += 1
+      if (re.test(item.content)) {
+        b += 1
+      }
+    }
+    return a > 0 ? (b / a) : 0
+  }
+
+  import(context, items, options) {
+    this.options = options
+    for (let item of items) {
+      this.importString(context, item.content)
+    }
+    return true
   }
 
   importString(context, string) {
