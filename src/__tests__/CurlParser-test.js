@@ -1715,6 +1715,32 @@ class TestCurlParser extends UnitTest {
     ]))
   }
 
+  testEmptyDataValueExample() {
+    const input = `curl 'https://httpbin.org/post' \
+      -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0) Gecko/20100101 Firefox/60.0' \
+      -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+      -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+      -H 'X-Requested-With: XMLHttpRequest' \
+      -H 'DNT: 1' \
+      --compressed \
+      --data ''
+    `
+    this.__testCurlRequest(input, new CurlRequest({
+      url: 'https://httpbin.org/post',
+      method: 'GET',
+      headers: Immutable.OrderedMap({
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0) Gecko/20100101 Firefox/60.0",
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "X-Requested-With": "XMLHttpRequest",
+        "Dnt": "1",
+        "Accept-Encoding": "gzip",
+      }),
+      body: Immutable.List(),
+      bodyType: "urlEncoded",
+    }))
+  }
+
   // 
   // helpers
   // 
@@ -1735,7 +1761,7 @@ class TestCurlParser extends UnitTest {
       return request
     })
 
-    console.log('expected:', JSON.stringify(expected), '\nrequests:', JSON.stringify(requests))
+    console.log('expected:', JSON.stringify(expected, null, 2), '\nrequests:', JSON.stringify(requests, null, 2))
     this.assertTrue(Immutable.is(requests, expected))
   }
 }

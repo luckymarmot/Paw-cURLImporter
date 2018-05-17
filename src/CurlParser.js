@@ -461,10 +461,15 @@ export default class CurlParser {
         }
 
         const arg = this._popArg()
+
+        // missing argument value, ignore
+        if (!arg) {
+            return request
+        }
         
         if (option === '--data' ||
-                option === '--data-raw' ||
-                option === '--data-binary') {
+            option === '--data-raw' ||
+            option === '--data-binary') {
             let value = arg
 
             // resolve file reference @filename
