@@ -3,6 +3,7 @@ script:
 - make test
 before_deploy:
 - make archive
+cache: yarn
 deploy:
   provider: releases
   api_key:
