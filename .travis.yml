@@ -1,15 +1,15 @@
 language: node_js
-before_script:
-- make build
-# before_deploy:
-# - make archive
-# deploy:
-#   provider: releases
-#   api_key:
-#     secure: WB1JXzJh/44TXVKjpNSLM3Nhf1lFJme+ODGGADBna/sYEHCRU1GiETekUy6OjJF/366yfzOqftkUIpv4z1oUrlHIiuIEl3jgQV/h5TeTykouQbvAPziCcYEMPzgfFX/TMx17MjcSG7pkF4FibAgZnbAtL1KF0V64CoajjYRqcfgMYlaoAJ4WLE0E5n6mqgsMSCQQQ1qf14JQ7WJUA4ypAiY9aQDysouAFnh84XrxUUev9Mtd1rS8Fo8NNSyoCBaKP/LTvAc4qU4gDxp6o7X60pj1vNvQ3crouACfi4oD7DEDTUP4B780H4ooJyr0u/bwdI3/ArlKSv++ELBia0Vpvsgd2jibs7woUBhJm81AJpsEm0nzIl2s9hvL67B1Vk2PDIeJBWibvx1hZKCUtznxzX16Thz+b91HSFTz7MCEr1ik79mIGSzqCAmLTnRqEn4yEBfqUvMrANkXb+zVQK3KPmkjQ5vLkUPS6WYABKCC9oueS+jjLdH13y0h5PivGf4dDARWDuEmJ8RoJZ7ExlU5mHPu3QquE/XNf3Vbqivx0vc4vGBaMG+uU2HCzSM7OPR0S50js3bNzYNYdh9cjNK0BHSAu34KkPxYSmDLuwdwDe4uJyXIf/uzslCieRuVmAQaX3OsvwS/8ga0KoomT7c99sChnrwTBnQ0hGACXQZKxnU=
-#   file: build/cURLImporter.zip
-#   skip_cleanup: true
-#   on:
-#     tags: true
-#     all_branches: true
-#     repo: luckymarmot/Paw-cURLImporter
+script:
+- make test
+before_deploy:
+- make archive
+deploy:
+  provider: releases
+  api_key:
+    secure: BW2krqyU/WjLdPHe9F839JReDAaz5N2eNFP680Hy+fJmlHfPiLoxNuEulpXfZEc+MSxEP9TzWgWoY7bEdkjvbTexNzIEeRpxojcMuH4e8Yf50tSB62qz8it48afowT6wCVQcg3cC9ahBeQZ57u3NchpxCAte4JtPu+BE89VI+B5kYohuJ7KX7i1bseJyuHBCZaWYb1EmOpoICIW1/LtHoDeqnxK/ipa/kRT/05bcmi/LjAsirQjbbRJ791Tz3kjPaIsnNRstjxKIEHuu+qGOgIgMHzwWeYz39er6NouGSlZaZySj7lGuY/TUTvdlLEbL2L5sIteT6Wz8pf2UmB7OhbcLzj2LPZ2VrVhw2Xk//qrQnuwrKiiOGHrWThB+1UpWLp2fu9i/w9WXrsk4zfuHKf7nZItllwYFhiDhBIKdUHkbaYlrCanTIUWCvHsWjlOZyqD7Xi+vfUUjLRq6ZxJpUDx2tt/JFNRPhQA8eO68NHw3ojO+5QA/izVfoFe2MUpEW/5ICPCJzRkISc8HmAvGi3mDVK6lZsGn1ReXwRmdBnR+5RDh65GM9+CcwD0nzkK00/lrxdXlVtsqhs+J0lAb+zhKiSfJTzLYfHDoZ4qwA734joixaCA9pbmc5JHjZ+/3hNiRnhu7t8DIfva9kV++CwYAXOk2TKrrwa/1os6OUCY=
+  file: dist/cURLImporter.zip
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+    repo: luckymarmot/Paw-cURLImporter

@@ -7,15 +7,12 @@ const production = process.env.NODE_ENV === 'production'
 
 const config = {
   target: 'node-webkit',
-  entry: [
-    'immutable',
-    './src/CurlImporter.js'
-  ],
+  entry: './src/CurlImporter.js',
   output:{
-    path: path.join(__dirname, './build/com.luckymarmot.PawExtensions.cURLImporter'),
+    path: path.join(__dirname, './dist/com.luckymarmot.PawExtensions.cURLImporter'),
     pathInfo: true,
-    publicPath: '/build/',
-    filename: name+'.js'
+    publicPath: '/dist/',
+    filename: `${name}.js`
   },
   module: {
     loaders: [

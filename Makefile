@@ -2,18 +2,18 @@ identifier=com.luckymarmot.PawExtensions.cURLImporter
 extensions_dir=$(HOME)/Library/Containers/com.luckymarmot.Paw/Data/Library/Application Support/com.luckymarmot.Paw/Extensions/
 
 build:
-	npm run build
-	cp README.md LICENSE ./build/$(identifier)/
+	yarn run build
+	cp README.md LICENSE ./dist/$(identifier)/
 
 clean:
-	rm -Rf ./build/
+	yarn run clean
 
 install: clean build
 	mkdir -p "$(extensions_dir)$(identifier)/"
-	cp -r ./build/$(identifier)/* "$(extensions_dir)$(identifier)/"
+	cp -r ./dist/$(identifier)/* "$(extensions_dir)$(identifier)/"
 
 test:
-	npm test
+	yarn run test
 
 archive: build
-	cd ./build/; zip -r cURLImporter.zip "$(identifier)/"
+	cd ./dist/; zip -r cURLImporter.zip "$(identifier)/"
