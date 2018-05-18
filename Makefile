@@ -3,7 +3,6 @@ extensions_dir=$(HOME)/Library/Containers/com.luckymarmot.Paw/Data/Library/Appli
 
 build:
 	yarn run build
-	cp README.md LICENSE ./dist/$(identifier)/
 
 clean:
 	yarn run clean
@@ -16,4 +15,4 @@ test:
 	yarn run test
 
 archive: build
-	cd ./dist/; zip -r cURLImporter.zip "$(identifier)/"
+	yarn run archive
