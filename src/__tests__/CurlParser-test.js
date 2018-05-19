@@ -1727,7 +1727,7 @@ class TestCurlParser extends UnitTest {
     `
     this.__testCurlRequest(input, new CurlRequest({
       url: 'https://httpbin.org/post',
-      method: 'GET',
+      method: 'POST',
       headers: Immutable.OrderedMap({
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0) Gecko/20100101 Firefox/60.0",
         "Accept": "application/json, text/javascript, */*; q=0.01",

@@ -460,13 +460,12 @@ export default class CurlParser {
             })
         }
 
-        const arg = this._popArg()
-
-        // missing argument value, ignore
+        // get argument value, consider empty if missing
+        let arg = this._popArg()
         if (!arg) {
-            return request
+            arg = ''
         }
-        
+
         if (option === '--data' ||
             option === '--data-raw' ||
             option === '--data-binary') {
@@ -490,6 +489,9 @@ export default class CurlParser {
                 for (let i = 0; i < components.length; i++) {
                     const component = components[i]
                     let m = component.match(/^([^\=]+)(?:\=([\s\S]*))?$/)
+                    if (!m) {
+                        continue
+                    }
                     request = request.set('body', request.get('body').push(new CurlKeyValue({
                         key: decodeURIComponent(m[1]),
                         value: (m[2] !== undefined ? decodeURIComponent(m[2]) : null)
