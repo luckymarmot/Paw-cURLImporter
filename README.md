@@ -22,6 +22,7 @@ This importer does not support the full cURL syntax. Supported arguments are:
 * `--url` or last string, will set the url (including protocol, http etc) (see [curl --url](http://curl.haxx.se/docs/manpage.html#--url))
 * `-X, --request` define method, default to automatic (GET, or POST if body data is present) (see [curl -X](http://curl.haxx.se/docs/manpage.html#-X))
 * `-I, --head` sets the method to `HEAD` (see [curl -I](http://curl.haxx.se/docs/manpage.html#-I))
+* `-G, --get` sets the method to `GET` while sending `-d, --data` (see [curl -G](https://curl.haxx.se/docs/manpage.html#-G))
 * `-m, --max-time` sets the request timeout in seconds (see [curl -m](http://curl.haxx.se/docs/manpage.html#-m))
 
 ### Headers

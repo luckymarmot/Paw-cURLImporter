@@ -389,6 +389,17 @@ class TestCurlParser extends UnitTest {
     }))
   }
 
+  testFormDataKeyValueAsGet() {
+    this.__testCurlRequest('curl -G http://httpbin.org/get -d key=value', new CurlRequest({
+      url: 'http://httpbin.org/get',
+      method: 'GET',
+      bodyType: 'urlEncoded',
+      body: Immutable.List([
+        new CurlKeyValue({key: 'key', value: 'value'})
+      ])
+    }))
+  }
+
   testFormDataKeyValueMultiple() {
     this.__testCurlRequest('curl http://httpbin.org/get -d key=value --data key2=value2', new CurlRequest({
       url: 'http://httpbin.org/get',

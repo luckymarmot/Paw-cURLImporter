@@ -165,6 +165,9 @@ export default class CurlParser {
             else if (arg === '-I' || arg === '--head') {
                 request = request.set('method', 'HEAD')
             }
+            else if (arg === '-G' || arg === '--get') {
+                request = request.set('method', 'GET')
+            }
             else if (arg === '-H' || arg === '--header') {
                 request = this._parseHeader(request)
             }
